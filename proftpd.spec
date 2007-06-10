@@ -13,7 +13,7 @@ Release:	%mkrel 0.rc2.3
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
-Source:	        ftp://ftp.proftpd.org/distrib/source/proftpd/%{name}-%{version}rc2.tar.bz2
+Source:	    ftp://ftp.proftpd.org/distrib/source/proftpd/%{name}-%{version}rc2.tar.bz2
 Source1:	proftpd.logrotate
 Source2: 	proftpd.xinetd
 Source3:	proftpd.init
@@ -65,8 +65,11 @@ BuildRequires:	tcp_wrappers-devel
 BuildRequires:	zlib-devel
 BuildRequires:	gettext-devel
 Provides:	ftpserver
-Conflicts:	wu-ftpd ncftpd beroftpd anonftp
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
+Conflicts:	wu-ftpd
+Conflicts:	ncftpd
+Conflicts:	beroftpd
+Conflicts:	anonftp
+BuildRoot:	%{_tmppath}/%{name}-%{version}
 
 %description
 ProFTPd is an enhanced FTP server with a focus toward simplicity, security, and
@@ -475,7 +478,7 @@ done
 make 
 
 %install
-[ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
+rm -rf %{buildroot}
 
 install -d %{buildroot}%{_initrddir}
 install -d %{buildroot}%{_libdir}/%{name}
@@ -544,6 +547,10 @@ LoadModule mod_ifsession.c
 EOF
 
 cat > README.urpmi << EOF
+Mandriva RPM specific notes
+
+modules support
+---------------
 proftpd-1.3.0 now loads the modules dynamically, very few modules are compiled
 into the proftpd binary. The new configuration file /etc/proftpd.conf uses a
 "Include /etc/proftpd.d/*.conf" statement which makes proftpd very similar to
@@ -581,21 +588,18 @@ list of the modules that are compiled as DSO's:
  o mod_wrap2.so            <- NEW
  o mod_wrap2_file.so       <- NEW
  o mod_wrap2_sql.so        <- NEW
+
+anonymous access configuration
+------------------------------
+Starting with 1.3.0-3mdv2007.1, there is no proftpd-anonymous package anymore.
+As it is just a configuration issue, providing a dedicated package was a bit
+overkill. Samples configuration files are available among normal package
+documentation. You may have to update your configuration manually.
 EOF
 
 # cleanup
 rm -f %{buildroot}%{_libdir}/%{name}/*.{a,la}
 rm -f contrib/README.mod_sql contrib/README.linux-privs
-
-cat > README.urpmi <<EOF
-Mandriva RPM specific notes
-
-Starting with 1.3.0-3mdv2007.1, there is no proftpd-anonymous package anymore.
-As it is just a configuration issue, providing a dedicated package was a bit
-overkill. Samples configuration files are available among normal package
-documentation.
-EOF
-
 
 %post
 %_post_service %{name}
@@ -850,8 +854,16 @@ if [ "$1" = 0 ]; then
     service proftpd condrestart
 fi
 
+%triggerpostun -- proftpd-anonymous
+# this package doesn't exist anymore, but its configuration file may
+# be used in current proftpd configuration
+if [ -e /etc/proftpd-anonymous.conf.rpmsave ]; then
+    mv -f /etc/proftpd-anonymous.conf.rpmsave /etc/proftpd-anonymous.conf
+    echo "warning: /etc/proftpd-anonymous.conf.rpmsave restored as /etc/proftpd-anonymous.conf"
+fi
+
 %clean
-[ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
+rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
