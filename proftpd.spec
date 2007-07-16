@@ -9,7 +9,7 @@
 Summary:	Professional FTP Server
 Name:		proftpd
 Version:	1.3.1
-Release:	%mkrel 0.rc2.4
+Release:	%mkrel 0.rc2.5
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
@@ -426,7 +426,7 @@ perl -pi -e "s|\<libpq-fe\.h\>|\<pgsql\/libpq-fe\.h\>|g" contrib/mod_sql_postgre
 
 %serverbuild
 
-export CFLAGS="%{optflags} -DLDAP_DEPRECATED -DUSE_LDAPV3_TLS -DHAVE_OPENSSL"
+export CFLAGS="%{optflags} -DLDAP_DEPRECATED -DUSE_LDAP_TLS -DHAVE_OPENSSL"
 export LIBS="-L%{_libdir} -lattr"
 
 pushd mod_gss-%{mod_gss_version}
