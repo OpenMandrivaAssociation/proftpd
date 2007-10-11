@@ -9,11 +9,11 @@
 Summary:	Professional FTP Server
 Name:		proftpd
 Version:	1.3.1
-Release:	%mkrel 0.rc3.0
+Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
-Source0:	ftp://ftp.proftpd.org/distrib/source/proftpd/%{name}-%{version}rc3.tar.bz2
+Source0:	ftp://ftp.proftpd.org/distrib/source/proftpd/%{name}-%{version}.tar.gz
 Source1:	proftpd.logrotate
 Source2: 	proftpd.xinetd
 Source3:	proftpd.init
@@ -35,12 +35,11 @@ Patch0:		proftpd-1.3.0-xferstats_logfile_location.diff
 Patch1:		proftpd-1.3.0-biarch-utmp.diff
 # (pixel): i kept the /lib/security/*.so instead of *.so in the patch to have a smaller patch
 # (pixel): spec-helper will clean it up
-Patch2:		proftpd-1.2.9-use-system-auth-instead-of-pam_pwdb.patch
+Patch2:		proftpd-use-system-auth-instead-of-pam_unix.diff
 Patch3:		proftpd-1.3.1rc2-FORTIFY_SOURCE_fix.diff
 Patch4:		proftpd-1.3.0-installfix.diff
 Patch5:		proftpd-1.3.1rc2-mod_facl_declare.diff
 Patch7:		proftpd-1.3.0-change_pam_name.diff
-Patch8:		mysql-typo.patch
 Patch23:	mod_gss-1.3.0-shared.diff
 Patch24:	proftpd-1.3.0-mod_autohost.diff
 Patch26:	proftpd-cvs-CVE-2007-2165-pam_fixes.patch
@@ -385,16 +384,15 @@ triggered based on configurable criteria.
 
 %prep
 
-%setup -q -n %{name}-%{version}rc3 -a100 -a102 -a103 -a104 -a105
+%setup -q -n %{name}-%{version} -a100 -a102 -a103 -a104 -a105
 
 %patch0 -p0 -b .logfile_location
 %patch1 -p0 -b .biarch-utmp
-%patch2 -p1 -b .pam
+%patch2 -p0 -b .pam
 %patch3 -p0 -b .FORTIFY_SOURCE_fix
 %patch4 -p1 -b .installfix
 %patch5 -p0 -b .mod_facl_declare
 %patch7 -p0 -b .change_pam_name
-%patch8 -p0
 
 %patch23 -p0 -b .mod_gss
 %patch24 -p0 -b .mod_autohost
