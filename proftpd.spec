@@ -89,6 +89,8 @@ This package contains the development headers for ProFTPD
 %package	mod_clamav
 Summary:	Scans newly uploaded files for viruses
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 Requires:	clamd
 
@@ -108,6 +110,8 @@ http://www.UglyBoxIndustries.com/
 %package	mod_ctrls_admin
 Summary:	Module implementing admin control handlers
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 
 %description	mod_ctrls_admin
@@ -116,6 +120,8 @@ This module implements administrative control actions for the ftpdctl program.
 %package	mod_ifsession
 Summary:	Module supporting conditional per-user/group/class configuration contexts
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 
 %description	mod_ifsession
@@ -124,6 +130,8 @@ Module supporting conditional per-user/group/class configuration contexts
 %package	mod_ldap
 Summary:	LDAP password lookup module for ProFTPD
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 
 %description	mod_ldap
@@ -132,6 +140,8 @@ LDAP password lookup module for ProFTPD
 %package	mod_quotatab
 Summary:	Module for managing FTP byte/file quotas via centralized tables
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-mod_quotatab_driver = %{version}-%{release}
 
@@ -141,6 +151,8 @@ Module for managing FTP byte/file quotas via centralized tables
 %package	mod_quotatab_file
 Summary:	Sub-module for managing quota data via file-based tables
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name}-mod_quotatab = %{version}-%{release}
 Provides:	%{name}-mod_quotatab_driver = %{version}-%{release}
 
@@ -150,6 +162,8 @@ Sub-module for managing quota data via file-based tables
 %package	mod_quotatab_ldap
 Summary:	Sub-module for obtaining quota information from an LDAP directory
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name}-mod_quotatab = %{version}-%{release}
 Provides:	%{name}-mod_quotatab_driver = %{version}-%{release}
 
@@ -159,6 +173,8 @@ Sub-module for obtaining quota information from an LDAP directory
 %package	mod_quotatab_sql
 Summary:	Sub-module for managing quota data via SQL-based tables
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name}-mod_quotatab = %{version}-%{release}
 Provides:	%{name}-mod_quotatab_driver = %{version}-%{release}
 
@@ -168,6 +184,8 @@ Sub-module for managing quota data via SQL-based tables
 %package	mod_quotatab_radius
 Summary:	Sub-module for managing quota data via radius
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name}-mod_quotatab = %{version}-%{release}
 Provides:	%{name}-mod_quotatab_driver = %{version}-%{release}
 
@@ -177,6 +195,8 @@ Sub-module for managing quota data via radius
 %package	mod_radius
 Summary:	Module for RADIUS authentication and accounting
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 
 %description	mod_radius
@@ -185,6 +205,8 @@ Module for RADIUS authentication and accounting
 %package	mod_ratio
 Summary:	Support upload/download ratios
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 
 %description	mod_ratio
@@ -193,6 +215,8 @@ Support upload/download ratios
 %package	mod_rewrite
 Summary:	Module for rewriting FTP commands
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 
 %description	mod_rewrite
@@ -201,6 +225,8 @@ Module for rewriting FTP commands
 %package	mod_site_misc
 Summary:	Module implementing miscellaneous SITE commands
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 
 %description	mod_site_misc
@@ -209,6 +235,8 @@ Module implementing miscellaneous SITE commands
 %package	mod_sql
 Summary:	SQL frontend
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-mod_sql_driver = %{version}-%{release}
 
@@ -218,6 +246,8 @@ SQL frontend
 %package	mod_sql_mysql
 Summary:	Support for connecting to MySQL databases
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name}-mod_sql = %{version}-%{release}
 Provides:	%{name}-mod_sql_driver = %{version}-%{release}
 
@@ -227,6 +257,8 @@ Support for connecting to MySQL databases
 %package	mod_sql_postgres
 Summary:	Support for connecting to Postgres databases
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name}-mod_sql = %{version}-%{release}
 Provides:	%{name}-mod_sql_driver = %{version}-%{release}
 
@@ -236,6 +268,8 @@ Support for connecting to Postgres databases
 %package	mod_tls
 Summary:	An RFC2228 SSL/TLS module for ProFTPD
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 
 %description	mod_tls
@@ -252,6 +286,8 @@ An RFC2228 SSL/TLS module for ProFTPD
 %package	mod_autohost
 Summary:	An autohost module for ProFTPD
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 
 %description	mod_autohost
@@ -276,6 +312,8 @@ only reads and uses the needed configuration.
 %package	mod_case
 Summary:	Makes ProFTPD case insensitive
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 
 %description	mod_case
@@ -291,6 +329,8 @@ directory again, this time looking for case-insensitive matches.
 %package	mod_gss
 Summary:	A Kerberos 5 GSS module for ProFTPD
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 
 %description	mod_gss
@@ -299,6 +339,8 @@ A Kerberos 5 GSS module for ProFTPD
 %package	mod_load
 Summary:	A module that determines average load for ProFTPD
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 
 %description	mod_load
@@ -311,6 +353,8 @@ please contact the author as soon as possible.
 %package	mod_shaper
 Summary:	A shaping module for ProFTPD
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 
 %description	mod_shaper
@@ -324,6 +368,8 @@ commands.
 %package	mod_time
 Summary:	Limits acces based on the time of day and/or the day of the week
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 
 %description	mod_time
@@ -334,6 +380,8 @@ this module follows the directive explanations.
 %package	mod_wrap
 Summary:	Provides tcpwrapper-like access control rules for ProFTPD
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-mod_wrap_driver = %{version}-%{release}
 Requires:	tcp_wrappers
@@ -353,6 +401,8 @@ table information in various formats:
 %package	mod_wrap_file
 Summary:	A file-specific driver for the mod_wrap module for ProFTPD
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 Provides:	%{name}-mod_wrap_driver = %{version}-%{release}
 
@@ -363,6 +413,8 @@ access control information in files.
 %package	mod_wrap_sql
 Summary:	A SQL database driver for the mod_wrap module for ProFTPD
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 Provides:	%{name}-mod_wrap_driver = %{version}-%{release}
 
@@ -373,6 +425,8 @@ access control information in SQL tables.
 %package	mod_ban
 Summary:	Adds dynamic "ban" lists to ProFTPD
 Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
 Requires:	%{name} = %{version}-%{release}
 
 %description	mod_ban
@@ -638,219 +692,219 @@ if [ -x /usr/sbin/xinetd ];then
 fi
 
 %post -n %{name}-mod_autohost
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_autohost
+%preun -n %{name}-mod_autohost
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_case
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_case
+%preun -n %{name}-mod_case
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_clamav
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_clamav
+%preun -n %{name}-mod_clamav
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_ctrls_admin
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_ctrls_admin
+%preun -n %{name}-mod_ctrls_admin
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 #%post -n %{name}-mod_facl
-#service proftpd condrestart
+#service proftpd condrestart > /dev/null 2>/dev/null || :
 #    
-#%postun -n %{name}-mod_facl
+#%preun -n %{name}-mod_facl
 #if [ "$1" = 0 ]; then
-#    service proftpd condrestart
+#    service proftpd condrestart > /dev/null 2>/dev/null || :
 #fi
 
 %post -n %{name}-mod_gss
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_gss
+%preun -n %{name}-mod_gss
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_ifsession
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_ifsession
+%preun -n %{name}-mod_ifsession
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_ldap
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_ldap
+%preun -n %{name}-mod_ldap
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_load
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_load
+%preun -n %{name}-mod_load
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_quotatab
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_quotatab
+%preun -n %{name}-mod_quotatab
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_quotatab_file
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_quotatab_file
+%preun -n %{name}-mod_quotatab_file
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_quotatab_ldap
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_quotatab_ldap
+%preun -n %{name}-mod_quotatab_ldap
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_quotatab_sql
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_quotatab_sql
+%preun -n %{name}-mod_quotatab_sql
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_quotatab_radius
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_quotatab_radius
+%preun -n %{name}-mod_quotatab_radius
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_radius
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_radius
+%preun -n %{name}-mod_radius
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_ratio
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_ratio
+%preun -n %{name}-mod_ratio
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_rewrite
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_rewrite
+%preun -n %{name}-mod_rewrite
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_shaper
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_shaper
+%preun -n %{name}-mod_shaper
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_site_misc
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_site_misc
+%preun -n %{name}-mod_site_misc
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_sql_mysql
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_sql_mysql
+%preun -n %{name}-mod_sql_mysql
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_sql
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_sql
+%preun -n %{name}-mod_sql
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_time
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_time
+%preun -n %{name}-mod_time
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_tls
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_tls
+%preun -n %{name}-mod_tls
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_wrap_file
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_wrap_file
+%preun -n %{name}-mod_wrap_file
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_wrap
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_wrap
+%preun -n %{name}-mod_wrap
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_wrap_sql
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_wrap_sql
+%preun -n %{name}-mod_wrap_sql
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %post -n %{name}-mod_ban
-service proftpd condrestart
+service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%postun -n %{name}-mod_ban
+%preun -n %{name}-mod_ban
 if [ "$1" = 0 ]; then
-    service proftpd condrestart
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
 %triggerpostun -- proftpd-anonymous
