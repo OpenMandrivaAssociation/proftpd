@@ -53,7 +53,7 @@ BuildRequires:	clamav-devel
 BuildRequires:	libacl-devel
 BuildRequires:	libattr-devel
 BuildRequires:	libkrb-devel
-BuildRequires:	MySQL-devel
+BuildRequires:	mysql-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	openldap-devel
 BuildRequires:	openssl-devel
