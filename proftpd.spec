@@ -29,8 +29,8 @@ Source102:	http://www.castaglia.org/proftpd/modules/proftpd-mod-autohost-%{mod_a
 Source103:	http://www.castaglia.org/proftpd/modules/proftpd-mod-case-%{mod_case_version}.tar.bz2
 Source104:	http://www.castaglia.org/proftpd/modules/proftpd-mod-shaper-%{mod_shaper_version}.tar.bz2
 Source105:	http://www.castaglia.org/proftpd/modules/proftpd-mod-time-%{mod_time_version}.tar.bz2
-Source106:	http://www.uglyboxindustries.com/mod_clamav_new.c.bz2
-Source107:	http://www.uglyboxindustries.com/mod_clamav_new.html.bz2
+Source106:	http://www.uglyboxindustries.com/mod_clamav_new.c
+Source107:	http://www.uglyboxindustries.com/mod_clamav_new.html
 Patch0:		proftpd-1.3.0-xferstats_logfile_location.diff
 Patch1:		proftpd-1.3.0-biarch-utmp.diff
 # (pixel): i kept the /lib/security/*.so instead of *.so in the patch to have a smaller patch
@@ -454,8 +454,8 @@ triggered based on configurable criteria.
 
 # "install" the clamav module
 mkdir -p mod_clamav
-bzcat %{SOURCE106} > mod_clamav/mod_clamav.c
-bzcat %{SOURCE107} > mod_clamav/mod_clamav.html
+cp %{SOURCE106} mod_clamav/mod_clamav.c
+cp %{SOURCE107} mod_clamav/mod_clamav.html
 
 # Mandriva config
 mkdir -p Mandriva
