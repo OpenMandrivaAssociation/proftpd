@@ -69,6 +69,7 @@ Conflicts:	wu-ftpd
 Conflicts:	ncftpd
 Conflicts:	beroftpd
 Conflicts:	anonftp
+BuildRoot:	%{_tmppath}/%{name}-%{version}
 
 %description
 ProFTPd is an enhanced FTP server with a focus toward simplicity, security, and
