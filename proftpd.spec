@@ -920,7 +920,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%doc README* ChangeLog INSTALL NEWS CREDITS COPYING doc/* README.urpmi
+%doc README* INSTALL NEWS CREDITS COPYING doc/* README.urpmi
 %doc sample-configurations/*
 %dir %{_sysconfdir}/proftpd.d
 %config(noreplace) %{_sysconfdir}/%{name}.conf
@@ -948,6 +948,7 @@ rm -rf %{buildroot}
 
 %files devel
 %defattr(-,root,root)
+%doc ChangeLog
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/*.h
 
