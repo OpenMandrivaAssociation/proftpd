@@ -75,7 +75,8 @@ BuildRoot:	%{_tmppath}/%{name}-%{version}
 ProFTPd is an enhanced FTP server with a focus toward simplicity, security, and
 ease of configuration.  It features a very Apache-like configuration syntax,
 and a highly customizable server infrastructure, including support for multiple
-'virtual' FTP servers, anonymous FTP, and permission-based directory visibility.
+'virtual' FTP servers, anonymous FTP, and permission-based directory
+visibility.
 
 This version supports both standalone and xinetd operation.
 
