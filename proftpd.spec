@@ -31,6 +31,7 @@ Source104:	http://www.castaglia.org/proftpd/modules/proftpd-mod-shaper-%{mod_sha
 Source105:	http://www.castaglia.org/proftpd/modules/proftpd-mod-time-%{mod_time_version}.tar.bz2
 Source106:	http://www.uglyboxindustries.com/mod_clamav_new.c
 Source107:	http://www.uglyboxindustries.com/mod_clamav_new.html
+Source200:  anonymous.conf
 Patch0:		proftpd-1.3.0-xferstats_logfile_location.diff
 Patch1:		proftpd-1.3.0-biarch-utmp.diff
 # (pixel): i kept the /lib/security/*.so instead of *.so in the patch to have a smaller patch
@@ -563,6 +564,8 @@ install -m0644 Mandriva/proftpd.service %{buildroot}%{_sysconfdir}/avahi/service
 install -m0644 Mandriva/basic.conf %{buildroot}%{_sysconfdir}/%{name}.conf
 install -m0644 Mandriva/welcome.msg %{buildroot}/var/ftp/pub/welcome.msg
 
+install -m0644 %{SOURCE200} %{buildroot}%{_sysconfdir}/proftpd-anonymous.conf
+
 ln -snf %{name} %{buildroot}%{_sbindir}/in.%{name}
 ln -snf %{name} %{buildroot}%{_sbindir}/in.ftpd
 
@@ -925,6 +928,7 @@ rm -rf %{buildroot}
 %doc sample-configurations/*
 %dir %{_sysconfdir}/proftpd.d
 %config(noreplace) %{_sysconfdir}/%{name}.conf
+%config(noreplace) %{_sysconfdir}/%{name}-anonymous.conf
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 %config(noreplace) %{_sysconfdir}/xinetd.d/%{name}-xinetd
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
