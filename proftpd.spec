@@ -9,7 +9,7 @@
 Summary:	Professional FTP Server
 Name:		proftpd
 Version:	1.3.1
-Release:	%mkrel 8
+Release:	%mkrel 9
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
@@ -69,7 +69,7 @@ Conflicts:	wu-ftpd
 Conflicts:	ncftpd
 Conflicts:	beroftpd
 Conflicts:	anonftp
-BuildRoot:	%{_tmppath}/%{name}-%{version}
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 ProFTPd is an enhanced FTP server with a focus toward simplicity, security, and
