@@ -44,6 +44,7 @@ Patch7:		proftpd-1.3.0-change_pam_name.diff
 Patch23:	mod_gss-1.3.0-shared.diff
 Patch24:	proftpd-1.3.0-mod_autohost.diff
 Patch26:	proftpd-cvs-CVE-2007-2165-pam_fixes.patch
+Patch27:    proftpd_modet.patch
 Requires:	pam >= 0.59
 Requires:	setup >= 2.2.0-21mdk
 Requires(post): rpm-helper
@@ -453,6 +454,11 @@ triggered based on configurable criteria.
 %patch23 -p0 -b .mod_gss
 %patch24 -p0 -b .mod_autohost
 %patch26 -p0 -b .cve-2007-2165-pam-fix
+# It compile fine on x86_64 w/o this patch
+# What about other arch ??
+%ifarch %ix86
+%patch27 -p0 -b .mode_t
+%endif
 
 # "install" the clamav module
 mkdir -p mod_clamav
