@@ -1,3 +1,5 @@
+%define _disable_ld_no_undefined 1
+
 %define _localstatedir 	 /var/run
 
 %define mod_gss_version 1.3.0
@@ -9,7 +11,7 @@
 Summary:	Professional FTP Server
 Name:		proftpd
 Version:	1.3.1
-Release:	%mkrel 12
+Release:	%mkrel 13
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
@@ -31,7 +33,7 @@ Source104:	http://www.castaglia.org/proftpd/modules/proftpd-mod-shaper-%{mod_sha
 Source105:	http://www.castaglia.org/proftpd/modules/proftpd-mod-time-%{mod_time_version}.tar.bz2
 Source106:	http://www.uglyboxindustries.com/mod_clamav_new.c
 Source107:	http://www.uglyboxindustries.com/mod_clamav_new.html
-Source200:  anonymous.conf
+Source200:	anonymous.conf
 Patch0:		proftpd-1.3.0-xferstats_logfile_location.diff
 Patch1:		proftpd-1.3.0-biarch-utmp.diff
 # (pixel): i kept the /lib/security/*.so instead of *.so in the patch to have a smaller patch
@@ -44,7 +46,8 @@ Patch7:		proftpd-1.3.0-change_pam_name.diff
 Patch23:	mod_gss-1.3.0-shared.diff
 Patch24:	proftpd-1.3.0-mod_autohost.diff
 Patch26:	proftpd-cvs-CVE-2007-2165-pam_fixes.patch
-Patch27:    proftpd_modet.patch
+Patch27:	proftpd_modet.patch
+Patch28:	proftpd-mod_rewrite-glibc28_fix.diff
 Requires:	pam >= 0.59
 Requires:	setup >= 2.2.0-21mdk
 Requires(post): rpm-helper
@@ -460,6 +463,8 @@ triggered based on configurable criteria.
 %patch27 -p0 -b .mode_t
 %endif
 
+%patch28 -p0 -b .mod_rewrite-glibc28_fix
+
 # "install" the clamav module
 mkdir -p mod_clamav
 cp %{SOURCE106} mod_clamav/mod_clamav.c
@@ -481,7 +486,7 @@ perl -pi -e "s|/usr/lib|%{_libdir}|g" Mandriva/basic.conf
 
 # fix includes, instead of a patch
 perl -pi -e "s|\<mysql\.h\>|\<mysql\/mysql\.h\>|g" contrib/mod_sql_mysql.c
-perl -pi -e "s|\<libpq-fe\.h\>|\<pgsql\/libpq-fe\.h\>|g" contrib/mod_sql_postgres.c
+#perl -pi -e "s|\<libpq-fe\.h\>|\<pgsql\/libpq-fe\.h\>|g" contrib/mod_sql_postgres.c
 
 %build
 
@@ -494,6 +499,9 @@ pushd mod_gss-%{mod_gss_version}
 
 perl -pi -e "s|<gssapi.h>|<gssapi/gssapi.h>|" configure*
 perl -pi -e "s|NULL,code|kc,code|" *.in
+
+libtoolize --copy --force --ltdl
+rm -rf lib/libltdl; mv libltdl lib/
 
 rm -f configure; autoconf
 
