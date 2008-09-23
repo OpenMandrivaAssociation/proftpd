@@ -7,11 +7,12 @@
 %define mod_case_version 0.3
 %define mod_shaper_version 0.6.3
 %define mod_time_version 2.2.1
+%define mod_vroot_version 0.7.2
 
 Summary:	Professional FTP Server
 Name:		proftpd
 Version:	1.3.1
-Release:	%mkrel 13
+Release:	%mkrel 14
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
@@ -33,6 +34,7 @@ Source104:	http://www.castaglia.org/proftpd/modules/proftpd-mod-shaper-%{mod_sha
 Source105:	http://www.castaglia.org/proftpd/modules/proftpd-mod-time-%{mod_time_version}.tar.bz2
 Source106:	http://www.uglyboxindustries.com/mod_clamav_new.c
 Source107:	http://www.uglyboxindustries.com/mod_clamav_new.html
+Source108:	http://www.castaglia.org/proftpd/modules/proftpd-mod-vroot-%{mod_vroot_version}.tar.gz
 Source200:	anonymous.conf
 Patch0:		proftpd-1.3.0-xferstats_logfile_location.diff
 Patch1:		proftpd-1.3.0-biarch-utmp.diff
@@ -48,13 +50,16 @@ Patch24:	proftpd-1.3.0-mod_autohost.diff
 Patch26:	proftpd-cvs-CVE-2007-2165-pam_fixes.patch
 Patch27:	proftpd_modet.patch
 Patch28:	proftpd-mod_rewrite-glibc28_fix.diff
+Patch29:	proftpd-libcap_fix.diff
 Requires:	pam >= 0.59
 Requires:	setup >= 2.2.0-21mdk
 Requires(post): rpm-helper
 Requires(postun): rpm-helper
 Requires(preun): rpm-helper
 Requires(pre): rpm-helper
+BuildRequires:	cap-devel
 BuildRequires:	clamav-devel
+BuildRequires:	gettext-devel
 BuildRequires:	libacl-devel
 BuildRequires:	libattr-devel
 BuildRequires:	libkrb-devel
@@ -68,7 +73,6 @@ BuildRequires:	postgresql-devel
 BuildRequires:	sasl-plug-gssapi
 BuildRequires:	tcp_wrappers-devel
 BuildRequires:	zlib-devel
-BuildRequires:	gettext-devel
 Provides:	ftpserver
 Conflicts:	wu-ftpd
 Conflicts:	ncftpd
@@ -442,9 +446,21 @@ not prevent the banned user, host, or class from connecting to the server.
 mod_ban is not a firewall. The module also provides automatic bans that are
 triggered based on configurable criteria.
 
+%package	mod_vroot
+Summary:	Adds virtual chroot capability to ProFTPD
+Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
+
+%description	mod_vroot
+The purpose of this module to is to implement a virtual chroot capability that
+does not require root privileges. The mod_vroot module provides this capability
+by using ProFTPD's FS API, available as of 1.2.8rc1.
+
 %prep
 
-%setup -q -n %{name}-%{version} -a100 -a102 -a103 -a104 -a105
+%setup -q -n %{name}-%{version} -a100 -a102 -a103 -a104 -a105 -a108
 
 %patch0 -p0 -b .logfile_location
 %patch1 -p0 -b .biarch-utmp
@@ -464,6 +480,7 @@ triggered based on configurable criteria.
 %endif
 
 %patch28 -p0 -b .mod_rewrite-glibc28_fix
+%patch29 -p1 -b .libcap_fix
 
 # "install" the clamav module
 mkdir -p mod_clamav
@@ -541,8 +558,12 @@ done
     --enable-ipv6 \
     --enable-shadow \
     --enable-ctrls \
-    --with-shared="mod_ratio:mod_tls:mod_radius:mod_ldap:mod_sql:mod_sql_mysql:mod_sql_postgres:mod_rewrite:mod_ifsession:mod_gss:mod_load:mod_ctrls_admin:mod_quotatab:mod_quotatab_file:mod_quotatab_ldap:mod_quotatab_sql:mod_quotatab_radius:mod_site_misc:mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_autohost:mod_case:mod_shaper:mod_time:mod_clamav:mod_ban" \
+    --with-shared="mod_ratio:mod_tls:mod_radius:mod_ldap:mod_sql:mod_sql_mysql:mod_sql_postgres:mod_rewrite:mod_ifsession:mod_gss:mod_load:mod_ctrls_admin:mod_quotatab:mod_quotatab_file:mod_quotatab_ldap:mod_quotatab_sql:mod_quotatab_radius:mod_site_misc:mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_autohost:mod_case:mod_shaper:mod_time:mod_clamav:mod_ban:mod_vroot" \
     --with-modules="mod_readme:mod_auth_pam"
+
+# libcap hack
+perl -pi -e "s|/lib/libcap|/blabla|g" Make.rules
+echo "#define HAVE_LINUX_CAPABILITY_H 1" >> config.h
 
 make 
 
@@ -611,6 +632,7 @@ install -m0644 Mandriva/32_mod_shaper.conf %{buildroot}%{_sysconfdir}/%{name}.d/
 echo "LoadModule mod_site_misc.c" > %{buildroot}%{_sysconfdir}/%{name}.d/33_mod_site_misc.conf
 echo "LoadModule mod_time.c" > %{buildroot}%{_sysconfdir}/%{name}.d/34_mod_time.conf
 echo "LoadModule mod_ban.c" > %{buildroot}%{_sysconfdir}/%{name}.d/35_mod_ban.conf
+echo "LoadModule mod_vroot.c" > %{buildroot}%{_sysconfdir}/%{name}.d/36_mod_vroot.conf
 
 cat > %{buildroot}%{_sysconfdir}/%{name}.d/99_mod_ifsession.conf << EOF
 # keep this module the last one
@@ -659,6 +681,7 @@ list of the modules that are compiled as DSO's:
  o mod_wrap2.so            <- NEW
  o mod_wrap2_file.so       <- NEW
  o mod_wrap2_sql.so        <- NEW
+ o mod_vroot.so            <- NEW
 
 anonymous access configuration
 ------------------------------
@@ -925,6 +948,14 @@ if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
+%post -n %{name}-mod_vroot
+service proftpd condrestart > /dev/null 2>/dev/null || :
+    
+%preun -n %{name}-mod_vroot
+if [ "$1" = 0 ]; then
+    service proftpd condrestart > /dev/null 2>/dev/null || :
+fi
+
 %triggerpostun -- proftpd-anonymous
 # this package doesn't exist anymore, but its configuration file may
 # be used in current proftpd configuration
@@ -1134,3 +1165,9 @@ rm -rf %{buildroot}
 %doc doc/contrib/mod_ban.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/35_mod_ban.conf
 %{_libdir}/%{name}/mod_ban.so
+
+%files mod_vroot
+%defattr(-,root,root)
+%doc mod_vroot/mod_vroot.html
+%config(noreplace) %{_sysconfdir}/%{name}.d/36_mod_vroot.conf
+%{_libdir}/%{name}/mod_vroot.so
