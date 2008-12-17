@@ -12,7 +12,7 @@
 Summary:	Professional FTP Server
 Name:		proftpd
 Version:	1.3.1
-Release:	%mkrel 15
+Release:	%mkrel 16
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
@@ -47,10 +47,13 @@ Patch5:		proftpd-1.3.1rc2-mod_facl_declare.diff
 Patch7:		proftpd-1.3.0-change_pam_name.diff
 Patch23:	mod_gss-1.3.0-shared.diff
 Patch24:	proftpd-1.3.0-mod_autohost.diff
-Patch26:	proftpd-cvs-CVE-2007-2165-pam_fixes.patch
 Patch27:	proftpd_modet.patch
 Patch28:	proftpd-mod_rewrite-glibc28_fix.diff
 Patch29:	proftpd-libcap_fix.diff
+Patch40:	mod_gss-1.3.0-format_not_a_string_literal_and_no_format_arguments.diff
+Patch41:	mod_time-format_not_a_string_literal_and_no_format_arguments.diff
+Patch42:	mod_ban-format_not_a_string_literal_and_no_format_arguments.diff
+Patch43:	mod_wrap2-format_not_a_string_literal_and_no_format_arguments.diff
 Requires:	pam >= 0.59
 Requires:	setup >= 2.2.0-21mdk
 Requires(post): rpm-helper
@@ -472,7 +475,7 @@ by using ProFTPD's FS API, available as of 1.2.8rc1.
 
 %patch23 -p0 -b .mod_gss
 %patch24 -p0 -b .mod_autohost
-%patch26 -p0 -b .cve-2007-2165-pam-fix
+
 # It compile fine on x86_64 w/o this patch
 # What about other arch ??
 %ifarch %ix86
@@ -481,6 +484,12 @@ by using ProFTPD's FS API, available as of 1.2.8rc1.
 
 %patch28 -p0 -b .mod_rewrite-glibc28_fix
 %patch29 -p1 -b .libcap_fix
+
+%patch40 -p0 -b .format_not_a_string_literal_and_no_format_arguments
+%patch41 -p0 -b .format_not_a_string_literal_and_no_format_arguments
+%patch42 -p0 -b .format_not_a_string_literal_and_no_format_arguments
+%patch43 -p0 -b .format_not_a_string_literal_and_no_format_arguments
+
 
 # "install" the clamav module
 mkdir -p mod_clamav
