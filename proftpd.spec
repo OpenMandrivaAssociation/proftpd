@@ -2,7 +2,7 @@
 
 %define _localstatedir 	 /var/run
 
-%define mod_gss_version 1.3.0
+%define mod_gss_version 1.3.1
 %define mod_autohost_version 0.1
 %define mod_case_version 0.3
 %define mod_shaper_version 0.6.3
@@ -12,7 +12,7 @@
 Summary:	Professional FTP Server
 Name:		proftpd
 Version:	1.3.1
-Release:	%mkrel 16
+Release:	%mkrel 17
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
@@ -26,7 +26,7 @@ Source7:	welcome.msg
 Source29:	29_mod_clamav.conf
 Source32:	32_mod_shaper.conf
 # http://sourceforge.net/projects/gssmod/
-Source100:	http://prdownloads.sourceforge.net/gssmod/mod_gss-%{mod_gss_version}.tar.bz2
+Source100:	http://prdownloads.sourceforge.net/gssmod/mod_gss-%{mod_gss_version}.tar.gz
 # from http://www.castaglia.org/proftpd/
 Source102:	http://www.castaglia.org/proftpd/modules/proftpd-mod-autohost-%{mod_autohost_version}.tar.bz2
 Source103:	http://www.castaglia.org/proftpd/modules/proftpd-mod-case-%{mod_case_version}.tar.bz2
