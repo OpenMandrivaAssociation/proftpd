@@ -64,6 +64,8 @@ BuildRequires:	gettext-devel
 BuildRequires:	libacl-devel
 BuildRequires:	libattr-devel
 BuildRequires:	libkrb-devel
+BuildRequires:	libtool
+BuildRequires:	libtool-devel
 BuildRequires:	mysql-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	openldap-devel
