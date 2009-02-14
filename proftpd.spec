@@ -5,14 +5,15 @@
 %define mod_gss_version 1.3.1
 %define mod_autohost_version 0.1
 %define mod_case_version 0.3
-%define mod_shaper_version 0.6.3
+%define mod_shaper_version 0.6.5
 %define mod_time_version 2.2.1
-%define mod_vroot_version 0.7.2
+%define mod_vroot_version 0.8.3
+%define mod_sftp_version 0.9.6
 
 Summary:	Professional FTP Server
 Name:		proftpd
-Version:	1.3.1
-Release:	%mkrel 17
+Version:	1.3.2
+Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
@@ -28,9 +29,10 @@ Source32:	32_mod_shaper.conf
 # http://sourceforge.net/projects/gssmod/
 Source100:	http://prdownloads.sourceforge.net/gssmod/mod_gss-%{mod_gss_version}.tar.gz
 # from http://www.castaglia.org/proftpd/
+Source101:	http://www.castaglia.org/proftpd/modules/proftpd-mod-sftp-%{mod_sftp_version}.tar.gz
 Source102:	http://www.castaglia.org/proftpd/modules/proftpd-mod-autohost-%{mod_autohost_version}.tar.bz2
 Source103:	http://www.castaglia.org/proftpd/modules/proftpd-mod-case-%{mod_case_version}.tar.bz2
-Source104:	http://www.castaglia.org/proftpd/modules/proftpd-mod-shaper-%{mod_shaper_version}.tar.bz2
+Source104:	http://www.castaglia.org/proftpd/modules/proftpd-mod-shaper-%{mod_shaper_version}.tar.gz
 Source105:	http://www.castaglia.org/proftpd/modules/proftpd-mod-time-%{mod_time_version}.tar.bz2
 Source106:	http://www.uglyboxindustries.com/mod_clamav_new.c
 Source107:	http://www.uglyboxindustries.com/mod_clamav_new.html
@@ -48,11 +50,8 @@ Patch7:		proftpd-1.3.0-change_pam_name.diff
 Patch23:	mod_gss-1.3.0-shared.diff
 Patch24:	proftpd-1.3.0-mod_autohost.diff
 Patch27:	proftpd_modet.patch
-Patch28:	proftpd-mod_rewrite-glibc28_fix.diff
-Patch29:	proftpd-libcap_fix.diff
 Patch40:	mod_gss-1.3.0-format_not_a_string_literal_and_no_format_arguments.diff
 Patch41:	mod_time-format_not_a_string_literal_and_no_format_arguments.diff
-Patch42:	mod_ban-format_not_a_string_literal_and_no_format_arguments.diff
 Patch43:	mod_wrap2-format_not_a_string_literal_and_no_format_arguments.diff
 Requires:	pam >= 0.59
 Requires:	setup >= 2.2.0-21mdk
@@ -378,17 +377,17 @@ transmitted traffic, e.g. bits being downloaded via the RETR command, and
 received traffic, e.g. bits being uploaded via the APPE, STOR, and STOU
 commands.
 
-%package	mod_time
-Summary:	Limits acces based on the time of day and/or the day of the week
-Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+#%%package	mod_time
+#Summary:	Limits acces based on the time of day and/or the day of the week
+#Group:		System/Servers
+#Requires(post): %{name} = %{version}-%{release}
+#Requires(preun): %{name} = %{version}-%{release}
+#Requires:	%{name} = %{version}-%{release}
 
-%description	mod_time
-This module is designed to allow for limiting FTP commands based on the time of
-day and/or the day of the week. A more detailed explanation of the usage of
-this module follows the directive explanations.
+#%%description	mod_time
+#This module is designed to allow for limiting FTP commands based on the time of
+#day and/or the day of the week. A more detailed explanation of the usage of
+#this module follows the directive explanations.
 
 %package	mod_wrap
 Summary:	Provides tcpwrapper-like access control rules for ProFTPD
@@ -461,9 +460,31 @@ The purpose of this module to is to implement a virtual chroot capability that
 does not require root privileges. The mod_vroot module provides this capability
 by using ProFTPD's FS API, available as of 1.2.8rc1.
 
+%package	mod_sftp
+Summary:	Implements the SSH2 protocol and its SFTP subsystem for ProFTPD
+Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
+
+%description	mod_sftp
+The mod_sftp module implements the SSH2 protocol and its SFTP subsystem, for
+secure file transfer over an SSH2 connection. The mod_sftp module supports:
+
+ o Public key authentication
+ o Password authentication (e.g. user authentication via mod_sql, mod_ldap,
+   mod_auth_file, mod_auth_unix, mod_auth_pam)
+ o SCP support
+ o Quotas (via the mod_quotatab module)
+ o FIPS support (see Usage section)
+ o Throttled transfers (via TransferRate, and/or the mod_shaper module)
+ o Blacklisted public keys
+ o Configurable traffic analysis protection
+ o Passphrase-protected host keys 
+
 %prep
 
-%setup -q -n %{name}-%{version} -a100 -a102 -a103 -a104 -a105 -a108
+%setup -q -n %{name}-%{version} -a100 -a101 -a102 -a103 -a104 -a105 -a108
 
 %patch0 -p0 -b .logfile_location
 %patch1 -p0 -b .biarch-utmp
@@ -482,14 +503,9 @@ by using ProFTPD's FS API, available as of 1.2.8rc1.
 %patch27 -p0 -b .mode_t
 %endif
 
-%patch28 -p0 -b .mod_rewrite-glibc28_fix
-%patch29 -p1 -b .libcap_fix
-
 %patch40 -p0 -b .format_not_a_string_literal_and_no_format_arguments
 %patch41 -p0 -b .format_not_a_string_literal_and_no_format_arguments
-%patch42 -p0 -b .format_not_a_string_literal_and_no_format_arguments
 %patch43 -p0 -b .format_not_a_string_literal_and_no_format_arguments
-
 
 # "install" the clamav module
 mkdir -p mod_clamav
@@ -514,6 +530,9 @@ perl -pi -e "s|/usr/lib|%{_libdir}|g" Mandriva/basic.conf
 perl -pi -e "s|\<mysql\.h\>|\<mysql\/mysql\.h\>|g" contrib/mod_sql_mysql.c
 #perl -pi -e "s|\<libpq-fe\.h\>|\<pgsql\/libpq-fe\.h\>|g" contrib/mod_sql_postgres.c
 
+# mod_time is broken, needs porting
+rm -rf mod_time
+
 %build
 
 %serverbuild
@@ -521,25 +540,25 @@ perl -pi -e "s|\<mysql\.h\>|\<mysql\/mysql\.h\>|g" contrib/mod_sql_mysql.c
 export CFLAGS="$CFLAGS -DLDAP_DEPRECATED -DUSE_LDAP_TLS -DHAVE_OPENSSL"
 export LIBS="-L%{_libdir} -lattr"
 
-pushd mod_gss-%{mod_gss_version}
+mv mod_sftp contrib/
+pushd contrib/mod_sftp
+rm -f configure
+libtoolize --copy --force; aclocal; autoconf
+popd
 
+pushd mod_gss-%{mod_gss_version}
 perl -pi -e "s|<gssapi.h>|<gssapi/gssapi.h>|" configure*
 perl -pi -e "s|NULL,code|kc,code|" *.in
-
 libtoolize --copy --force --ltdl
 rm -rf lib/libltdl; mv libltdl lib/
-
 rm -f configure; autoconf
-
 %configure2_5x --enable-mit
-
 # Workaround a missing dcl in kerberos...
 cat >> mod_gss.h <<EOF
 #ifndef GSS_C_AF_INET6
 #define GSS_C_AF_INET6 24
 #endif
 EOF
-
 popd
 
 pushd contrib/mod_load
@@ -555,6 +574,12 @@ for i in `find mod_* -type f -name "*.c"` `find mod_* -type f -name "*.h"`; do
     cp $i contrib/
 done
 
+head -n 190 aclocal.m4 > acinclude.m4
+rm -f aclocal.m4
+libtoolize --copy --force --ltdl
+rm -rf lib/libltdl; mv libltdl lib/
+aclocal; autoconf
+
 %configure2_5x \
     --libexecdir=%{_libdir}/%{name} \
     --enable-auth-pam \
@@ -567,7 +592,7 @@ done
     --enable-ipv6 \
     --enable-shadow \
     --enable-ctrls \
-    --with-shared="mod_ratio:mod_tls:mod_radius:mod_ldap:mod_sql:mod_sql_mysql:mod_sql_postgres:mod_rewrite:mod_ifsession:mod_gss:mod_load:mod_ctrls_admin:mod_quotatab:mod_quotatab_file:mod_quotatab_ldap:mod_quotatab_sql:mod_quotatab_radius:mod_site_misc:mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_autohost:mod_case:mod_shaper:mod_time:mod_clamav:mod_ban:mod_vroot" \
+    --with-shared="mod_ratio:mod_tls:mod_radius:mod_ldap:mod_sql:mod_sql_mysql:mod_sql_postgres:mod_rewrite:mod_gss:mod_load:mod_ctrls_admin:mod_quotatab:mod_quotatab_file:mod_quotatab_ldap:mod_quotatab_sql:mod_quotatab_radius:mod_site_misc:mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_autohost:mod_case:mod_shaper:mod_clamav:mod_ban:mod_vroot:mod_sftp:mod_ifsession" \
     --with-modules="mod_readme:mod_auth_pam"
 
 # libcap hack
@@ -593,10 +618,16 @@ install -d %{buildroot}/var/run/%{name}
 %makeinstall \
     rundir=%{buildroot}/var/run/%{name} \
     LIBEXECDIR=%{buildroot}%{_libdir}/%{name} \
-    SHARED_MODULE_DIRS=""
+    SHARED_MODULE_DIRS="" \
+    pkgconfigdir=%{buildroot}%{_libdir}/pkgconfig
+
+# fix borked pkgconfig file
+perl -pi -e "s|^prefix.*|prefix=%{_prefix}|g" %{buildroot}%{_libdir}/pkgconfig/*.pc
+perl -pi -e "s|/lib/|/%{_lib}/|g" %{buildroot}%{_libdir}/pkgconfig/*.pc
 
 %makeinstall -C contrib/mod_wrap2 LIBEXECDIR=%{buildroot}%{_libdir}/%{name}
 %makeinstall -C contrib/mod_load LIBEXECDIR=%{buildroot}%{_libdir}/%{name}
+%makeinstall -C contrib/mod_sftp LIBEXECDIR=%{buildroot}%{_libdir}/%{name}
 
 install -m0644 contrib/dist/rpm/ftp.pamd %{buildroot}%{_sysconfdir}/pam.d/%{name}
 install -m0755 contrib/xferstats.holger-preiss %{buildroot}%{_sbindir}
@@ -639,9 +670,10 @@ install -m0644 Mandriva/29_mod_clamav.conf %{buildroot}%{_sysconfdir}/%{name}.d/
 echo "LoadModule mod_load.c" > %{buildroot}%{_sysconfdir}/%{name}.d/31_mod_load.conf
 install -m0644 Mandriva/32_mod_shaper.conf %{buildroot}%{_sysconfdir}/%{name}.d/32_mod_shaper.conf
 echo "LoadModule mod_site_misc.c" > %{buildroot}%{_sysconfdir}/%{name}.d/33_mod_site_misc.conf
-echo "LoadModule mod_time.c" > %{buildroot}%{_sysconfdir}/%{name}.d/34_mod_time.conf
+#echo "LoadModule mod_time.c" > %{buildroot}%{_sysconfdir}/%{name}.d/34_mod_time.conf
 echo "LoadModule mod_ban.c" > %{buildroot}%{_sysconfdir}/%{name}.d/35_mod_ban.conf
 echo "LoadModule mod_vroot.c" > %{buildroot}%{_sysconfdir}/%{name}.d/36_mod_vroot.conf
+echo "LoadModule mod_sftp.c" > %{buildroot}%{_sysconfdir}/%{name}.d/37_mod_sftp.conf
 
 cat > %{buildroot}%{_sysconfdir}/%{name}.d/99_mod_ifsession.conf << EOF
 # keep this module the last one
@@ -685,13 +717,14 @@ list of the modules that are compiled as DSO's:
  o mod_sql.so              <- NEW
  o mod_sql_mysql.so        <- NEW
  o mod_sql_postgres.so     <- NEW
- o mod_time.so             <- NEW
+ o mod_time.so             <- BROKEN
  o mod_tls.so
  o mod_wrap2.so            <- NEW
  o mod_wrap2_file.so       <- NEW
  o mod_wrap2_sql.so        <- NEW
  o mod_vroot.so            <- NEW
-
+ o mod_sftp                <- NEW
+ 
 anonymous access configuration
 ------------------------------
 Starting with 1.3.0-3mdv2007.1, there is no proftpd-anonymous package anymore.
@@ -699,6 +732,9 @@ As it is just a configuration issue, providing a dedicated package was a bit
 overkill. Samples configuration files are available among normal package
 documentation. You may have to update your configuration manually.
 EOF
+
+
+%find_lang %{name}
 
 # cleanup
 rm -f %{buildroot}%{_libdir}/%{name}/*.{a,la}
@@ -909,13 +945,13 @@ if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_time
-service proftpd condrestart > /dev/null 2>/dev/null || :
+#%%post -n %{name}-mod_time
+#service proftpd condrestart > /dev/null 2>/dev/null || :
     
-%preun -n %{name}-mod_time
-if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
-fi
+#%%preun -n %{name}-mod_time
+#if [ "$1" = 0 ]; then
+#    service proftpd condrestart > /dev/null 2>/dev/null || :
+#fi
 
 %post -n %{name}-mod_tls
 service proftpd condrestart > /dev/null 2>/dev/null || :
@@ -965,6 +1001,14 @@ if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
+%post -n %{name}-mod_sftp
+service proftpd condrestart > /dev/null 2>/dev/null || :
+    
+%preun -n %{name}-mod_sftp
+if [ "$1" = 0 ]; then
+    service proftpd condrestart > /dev/null 2>/dev/null || :
+fi
+
 %triggerpostun -- proftpd-anonymous
 # this package doesn't exist anymore, but its configuration file may
 # be used in current proftpd configuration
@@ -976,7 +1020,7 @@ fi
 %clean
 rm -rf %{buildroot}
 
-%files
+%files -f %{name}.lang
 %defattr(-,root,root)
 %doc README* INSTALL NEWS CREDITS COPYING doc/* README.urpmi
 %doc sample-configurations/*
@@ -997,6 +1041,7 @@ rm -rf %{buildroot}
 %{_bindir}/ftpdctl
 %{_bindir}/ftptop
 %{_bindir}/ftpwho
+%{_bindir}/prxs
 %dir %{_libdir}/%{name}
 %dir /var/ftp
 %dir /var/ftp/pub
@@ -1010,6 +1055,7 @@ rm -rf %{buildroot}
 %doc ChangeLog
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/*.h
+%{_libdir}/pkgconfig/*.pc
 
 %files mod_clamav
 %defattr(-,root,root)
@@ -1145,11 +1191,11 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/%{name}.d/32_mod_shaper.conf
 %{_libdir}/%{name}/mod_shaper.so
 
-%files mod_time
-%defattr(-,root,root)
-%doc mod_time/README mod_time/mod_time.html
-%config(noreplace) %{_sysconfdir}/%{name}.d/34_mod_time.conf
-%{_libdir}/%{name}/mod_time.so
+#%%files mod_time
+#%%defattr(-,root,root)
+#%%doc mod_time/README mod_time/mod_time.html
+#%%config(noreplace) %{_sysconfdir}/%{name}.d/34_mod_time.conf
+#%%{_libdir}/%{name}/mod_time.so
 
 %files mod_wrap
 %defattr(-,root,root)
@@ -1180,3 +1226,11 @@ rm -rf %{buildroot}
 %doc mod_vroot/mod_vroot.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/36_mod_vroot.conf
 %{_libdir}/%{name}/mod_vroot.so
+
+%files mod_sftp
+%defattr(-,root,root)
+%doc contrib/mod_sftp/mod_sftp.html
+%config(noreplace) %{_sysconfdir}/blacklist.dat
+%config(noreplace) %{_sysconfdir}/dhparams.pem
+%config(noreplace) %{_sysconfdir}/%{name}.d/37_mod_sftp.conf
+%{_libdir}/%{name}/mod_sftp.so
