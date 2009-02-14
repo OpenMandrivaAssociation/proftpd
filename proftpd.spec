@@ -500,7 +500,7 @@ secure file transfer over an SSH2 connection. The mod_sftp module supports:
 # It compile fine on x86_64 w/o this patch
 # What about other arch ??
 %ifarch %ix86
-%patch27 -p0 -b .mode_t
+%patch27 -p1 -b .mode_t
 %endif
 
 %patch40 -p0 -b .format_not_a_string_literal_and_no_format_arguments
