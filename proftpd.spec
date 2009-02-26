@@ -13,7 +13,7 @@
 Summary:	Professional FTP Server
 Name:		proftpd
 Version:	1.3.2
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
@@ -24,7 +24,6 @@ Source3:	proftpd.init
 Source4:	proftpd.service
 Source5:	basic.conf
 Source7:	welcome.msg
-Source29:	29_mod_clamav.conf
 Source32:	32_mod_shaper.conf
 # http://sourceforge.net/projects/gssmod/
 Source100:	http://prdownloads.sourceforge.net/gssmod/mod_gss-%{mod_gss_version}.tar.gz
@@ -34,8 +33,6 @@ Source102:	http://www.castaglia.org/proftpd/modules/proftpd-mod-autohost-%{mod_a
 Source103:	http://www.castaglia.org/proftpd/modules/proftpd-mod-case-%{mod_case_version}.tar.bz2
 Source104:	http://www.castaglia.org/proftpd/modules/proftpd-mod-shaper-%{mod_shaper_version}.tar.gz
 Source105:	http://www.castaglia.org/proftpd/modules/proftpd-mod-time-%{mod_time_version}.tar.bz2
-Source106:	http://www.uglyboxindustries.com/mod_clamav_new.c
-Source107:	http://www.uglyboxindustries.com/mod_clamav_new.html
 Source108:	http://www.castaglia.org/proftpd/modules/proftpd-mod-vroot-%{mod_vroot_version}.tar.gz
 Source200:	anonymous.conf
 Patch0:		proftpd-1.3.0-xferstats_logfile_location.diff
@@ -59,7 +56,6 @@ Requires(postun): rpm-helper
 Requires(preun): rpm-helper
 Requires(pre): rpm-helper
 BuildRequires:	cap-devel
-BuildRequires:	clamav-devel
 BuildRequires:	gettext-devel
 BuildRequires:	libacl-devel
 BuildRequires:	libattr-devel
@@ -98,27 +94,6 @@ Group:		Development/C
 
 %description	devel
 This package contains the development headers for ProFTPD
-
-%package	mod_clamav
-Summary:	Scans newly uploaded files for viruses
-Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
-Requires:	clamd
-
-%description	mod_clamav
-The mod_clamav module is designed to scan files immediately upon upload through
-FTP for viruses. If the file is found to be infected, it is immediately removed
-from the system, and a message is logged. If the file is found to be free of
-viruses, the FTP client is sent an optional message stating the file was
-scanned. This module is best employed in scenarios where many users are using a
-system that is maintained by another entity. In this scenario, the
-administrator of the machine is helping to ensure that no viruses are spread to
-other users.
-
-The most current version of mod_clamav can be found at:
-http://www.UglyBoxIndustries.com/
 
 %package	mod_ctrls_admin
 Summary:	Module implementing admin control handlers
@@ -502,11 +477,6 @@ secure file transfer over an SSH2 connection. The mod_sftp module supports:
 %patch41 -p0 -b .format_not_a_string_literal_and_no_format_arguments
 %patch43 -p0 -b .format_not_a_string_literal_and_no_format_arguments
 
-# "install" the clamav module
-mkdir -p mod_clamav
-cp %{SOURCE106} mod_clamav/mod_clamav.c
-cp %{SOURCE107} mod_clamav/mod_clamav.html
-
 # Mandriva config
 mkdir -p Mandriva
 install -m0644 %{SOURCE1} Mandriva/proftpd.logrotate
@@ -515,7 +485,6 @@ install -m0644 %{SOURCE3} Mandriva/proftpd.init
 install -m0644 %{SOURCE4} Mandriva/proftpd.service
 install -m0644 %{SOURCE5} Mandriva/basic.conf
 install -m0644 %{SOURCE7} Mandriva/welcome.msg
-install -m0644 %{SOURCE29} Mandriva/29_mod_clamav.conf
 install -m0644 %{SOURCE32} Mandriva/32_mod_shaper.conf
 
 # lib64 fix
@@ -587,7 +556,7 @@ aclocal; autoconf
     --enable-ipv6 \
     --enable-shadow \
     --enable-ctrls \
-    --with-shared="mod_ratio:mod_tls:mod_radius:mod_ldap:mod_sql:mod_sql_mysql:mod_sql_postgres:mod_rewrite:mod_gss:mod_load:mod_ctrls_admin:mod_quotatab:mod_quotatab_file:mod_quotatab_ldap:mod_quotatab_sql:mod_quotatab_radius:mod_site_misc:mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_autohost:mod_case:mod_shaper:mod_clamav:mod_ban:mod_vroot:mod_sftp:mod_ifsession" \
+    --with-shared="mod_ratio:mod_tls:mod_radius:mod_ldap:mod_sql:mod_sql_mysql:mod_sql_postgres:mod_rewrite:mod_gss:mod_load:mod_ctrls_admin:mod_quotatab:mod_quotatab_file:mod_quotatab_ldap:mod_quotatab_sql:mod_quotatab_radius:mod_site_misc:mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_autohost:mod_case:mod_shaper:mod_ban:mod_vroot:mod_sftp:mod_ifsession" \
     --with-modules="mod_readme:mod_auth_pam"
 
 # libcap hack
@@ -660,7 +629,6 @@ echo "LoadModule mod_ratio.c" > %{buildroot}%{_sysconfdir}/%{name}.d/25_mod_rati
 echo "LoadModule mod_gss.c" > %{buildroot}%{_sysconfdir}/%{name}.d/26_mod_gss.conf
 echo "LoadModule mod_autohost.c" > %{buildroot}%{_sysconfdir}/%{name}.d/27_mod_autohost.conf
 echo "LoadModule mod_case.c" > %{buildroot}%{_sysconfdir}/%{name}.d/28_mod_case.conf
-install -m0644 Mandriva/29_mod_clamav.conf %{buildroot}%{_sysconfdir}/%{name}.d/29_mod_clamav.conf
 #echo "LoadModule mod_facl.c" > %{buildroot}%{_sysconfdir}/%{name}.d/30_mod_facl.conf
 echo "LoadModule mod_load.c" > %{buildroot}%{_sysconfdir}/%{name}.d/31_mod_load.conf
 install -m0644 Mandriva/32_mod_shaper.conf %{buildroot}%{_sysconfdir}/%{name}.d/32_mod_shaper.conf
@@ -692,7 +660,6 @@ list of the modules that are compiled as DSO's:
  o mod_autohost.so         <- NEW
  o mod_ban.so              <- NEW
  o mod_case.so             <- NEW
- o mod_clamav.so           <- NEW
  o mod_ctrls_admin.so      <- NEW
  o mod_facl.so
  o mod_gss.so
@@ -784,14 +751,6 @@ fi
 service proftpd condrestart > /dev/null 2>/dev/null || :
     
 %preun -n %{name}-mod_case
-if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
-fi
-
-%post -n %{name}-mod_clamav
-service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_clamav
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
@@ -1051,12 +1010,6 @@ rm -rf %{buildroot}
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/*.h
 %{_libdir}/pkgconfig/*.pc
-
-%files mod_clamav
-%defattr(-,root,root)
-%doc mod_clamav/mod_clamav.html
-%config(noreplace) %{_sysconfdir}/%{name}.d/29_mod_clamav.conf
-%{_libdir}/%{name}/mod_clamav.so
 
 %files mod_ctrls_admin
 %defattr(-,root,root)
