@@ -13,7 +13,7 @@
 Summary:	Professional FTP Server
 Name:		proftpd
 Version:	1.3.2
-Release:	%mkrel 2
+Release:	%mkrel 3
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
@@ -44,6 +44,7 @@ Patch3:		proftpd-1.3.1rc2-FORTIFY_SOURCE_fix.diff
 Patch4:		proftpd-1.3.0-installfix.diff
 Patch5:		proftpd-1.3.1rc2-mod_facl_declare.diff
 Patch7:		proftpd-1.3.0-change_pam_name.diff
+Patch8:		proftpd-1.3.2-mod_time_fix.diff
 Patch23:	mod_gss-1.3.0-shared.diff
 Patch24:	proftpd-1.3.0-mod_autohost.diff
 Patch40:	mod_gss-1.3.0-format_not_a_string_literal_and_no_format_arguments.diff
@@ -353,17 +354,17 @@ transmitted traffic, e.g. bits being downloaded via the RETR command, and
 received traffic, e.g. bits being uploaded via the APPE, STOR, and STOU
 commands.
 
-#%%package	mod_time
-#Summary:	Limits acces based on the time of day and/or the day of the week
-#Group:		System/Servers
-#Requires(post): %{name} = %{version}-%{release}
-#Requires(preun): %{name} = %{version}-%{release}
-#Requires:	%{name} = %{version}-%{release}
+%package	mod_time
+Summary:	Limits acces based on the time of day and/or the day of the week
+Group:		System/Servers
+Requires(post): %{name} = %{version}-%{release}
+Requires(preun): %{name} = %{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
-#%%description	mod_time
-#This module is designed to allow for limiting FTP commands based on the time of
-#day and/or the day of the week. A more detailed explanation of the usage of
-#this module follows the directive explanations.
+%description	mod_time
+This module is designed to allow for limiting FTP commands based on the time of
+day and/or the day of the week. A more detailed explanation of the usage of
+this module follows the directive explanations.
 
 %package	mod_wrap
 Summary:	Provides tcpwrapper-like access control rules for ProFTPD
@@ -469,6 +470,7 @@ secure file transfer over an SSH2 connection. The mod_sftp module supports:
 %patch4 -p1 -b .installfix
 %patch5 -p0 -b .mod_facl_declare
 %patch7 -p0 -b .change_pam_name
+%patch8 -p0 -b .mod_time_fix
 
 %patch23 -p0 -b .mod_gss
 %patch24 -p0 -b .mod_autohost
@@ -493,9 +495,6 @@ perl -pi -e "s|/usr/lib|%{_libdir}|g" Mandriva/basic.conf
 # fix includes, instead of a patch
 perl -pi -e "s|\<mysql\.h\>|\<mysql\/mysql\.h\>|g" contrib/mod_sql_mysql.c
 #perl -pi -e "s|\<libpq-fe\.h\>|\<pgsql\/libpq-fe\.h\>|g" contrib/mod_sql_postgres.c
-
-# mod_time is broken, needs porting
-rm -rf mod_time
 
 %build
 
@@ -556,7 +555,7 @@ aclocal; autoconf
     --enable-ipv6 \
     --enable-shadow \
     --enable-ctrls \
-    --with-shared="mod_ratio:mod_tls:mod_radius:mod_ldap:mod_sql:mod_sql_mysql:mod_sql_postgres:mod_rewrite:mod_gss:mod_load:mod_ctrls_admin:mod_quotatab:mod_quotatab_file:mod_quotatab_ldap:mod_quotatab_sql:mod_quotatab_radius:mod_site_misc:mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_autohost:mod_case:mod_shaper:mod_ban:mod_vroot:mod_sftp:mod_ifsession" \
+    --with-shared="mod_ratio:mod_tls:mod_radius:mod_ldap:mod_sql:mod_sql_mysql:mod_sql_postgres:mod_rewrite:mod_gss:mod_load:mod_ctrls_admin:mod_quotatab:mod_quotatab_file:mod_quotatab_ldap:mod_quotatab_sql:mod_quotatab_radius:mod_site_misc:mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_autohost:mod_case:mod_shaper:mod_ban:mod_vroot:mod_sftp:mod_time:mod_ifsession" \
     --with-modules="mod_readme:mod_auth_pam"
 
 # libcap hack
@@ -633,7 +632,7 @@ echo "LoadModule mod_case.c" > %{buildroot}%{_sysconfdir}/%{name}.d/28_mod_case.
 echo "LoadModule mod_load.c" > %{buildroot}%{_sysconfdir}/%{name}.d/31_mod_load.conf
 install -m0644 Mandriva/32_mod_shaper.conf %{buildroot}%{_sysconfdir}/%{name}.d/32_mod_shaper.conf
 echo "LoadModule mod_site_misc.c" > %{buildroot}%{_sysconfdir}/%{name}.d/33_mod_site_misc.conf
-#echo "LoadModule mod_time.c" > %{buildroot}%{_sysconfdir}/%{name}.d/34_mod_time.conf
+echo "LoadModule mod_time.c" > %{buildroot}%{_sysconfdir}/%{name}.d/34_mod_time.conf
 echo "LoadModule mod_ban.c" > %{buildroot}%{_sysconfdir}/%{name}.d/35_mod_ban.conf
 echo "LoadModule mod_vroot.c" > %{buildroot}%{_sysconfdir}/%{name}.d/36_mod_vroot.conf
 echo "LoadModule mod_sftp.c" > %{buildroot}%{_sysconfdir}/%{name}.d/37_mod_sftp.conf
@@ -679,7 +678,7 @@ list of the modules that are compiled as DSO's:
  o mod_sql.so              <- NEW
  o mod_sql_mysql.so        <- NEW
  o mod_sql_postgres.so     <- NEW
- o mod_time.so             <- BROKEN
+ o mod_time.so             <- NEW
  o mod_tls.so
  o mod_wrap2.so            <- NEW
  o mod_wrap2_file.so       <- NEW
@@ -899,13 +898,13 @@ if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-#%%post -n %{name}-mod_time
-#service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-#%%preun -n %{name}-mod_time
-#if [ "$1" = 0 ]; then
-#    service proftpd condrestart > /dev/null 2>/dev/null || :
-#fi
+%post -n %{name}-mod_time
+service proftpd condrestart > /dev/null 2>/dev/null || :
+
+%preun -n %{name}-mod_time
+if [ "$1" = 0 ]; then
+    service proftpd condrestart > /dev/null 2>/dev/null || :
+fi
 
 %post -n %{name}-mod_tls
 service proftpd condrestart > /dev/null 2>/dev/null || :
@@ -1139,11 +1138,11 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/%{name}.d/32_mod_shaper.conf
 %{_libdir}/%{name}/mod_shaper.so
 
-#%%files mod_time
-#%%defattr(-,root,root)
-#%%doc mod_time/README mod_time/mod_time.html
-#%%config(noreplace) %{_sysconfdir}/%{name}.d/34_mod_time.conf
-#%%{_libdir}/%{name}/mod_time.so
+%files mod_time
+%defattr(-,root,root)
+%doc mod_time/README mod_time/mod_time.html
+%config(noreplace) %{_sysconfdir}/%{name}.d/34_mod_time.conf
+%{_libdir}/%{name}/mod_time.so
 
 %files mod_wrap
 %defattr(-,root,root)
