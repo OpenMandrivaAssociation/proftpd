@@ -13,7 +13,7 @@
 Summary:	Professional FTP Server
 Name:		proftpd
 Version:	1.3.2
-Release:	%mkrel 3
+Release:	%mkrel 4
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
@@ -501,16 +501,16 @@ export LIBS="-L%{_libdir} -lattr"
 
 mv mod_sftp contrib/
 pushd contrib/mod_sftp
-rm -f configure
-libtoolize --copy --force; aclocal; autoconf
+#rm -f configure
+#libtoolize --copy --force; aclocal; autoconf
 popd
 
 pushd mod_gss-%{mod_gss_version}
 perl -pi -e "s|<gssapi.h>|<gssapi/gssapi.h>|" configure*
 perl -pi -e "s|NULL,code|kc,code|" *.in
-libtoolize --copy --force --ltdl
-rm -rf lib/libltdl; mv libltdl lib/
-rm -f configure; autoconf
+#libtoolize --copy --force --ltdl
+#rm -rf lib/libltdl; mv libltdl lib/
+#rm -f configure; autoconf
 %configure2_5x --enable-mit
 # Workaround a missing dcl in kerberos...
 cat >> mod_gss.h <<EOF
@@ -533,11 +533,11 @@ for i in `find mod_* -type f -name "*.c"` `find mod_* -type f -name "*.h"`; do
     cp $i contrib/
 done
 
-head -n 190 aclocal.m4 > acinclude.m4
-rm -f aclocal.m4
-libtoolize --copy --force --ltdl
-rm -rf lib/libltdl; mv libltdl lib/
-aclocal; autoconf
+#head -n 190 aclocal.m4 > acinclude.m4
+#rm -f aclocal.m4
+#libtoolize --copy --force --ltdl
+#rm -rf lib/libltdl; mv libltdl lib/
+#aclocal; autoconf
 
 %configure2_5x \
     --libexecdir=%{_libdir}/%{name} \
@@ -558,7 +558,7 @@ aclocal; autoconf
 perl -pi -e "s|/lib/libcap|/blabla|g" Make.rules
 echo "#define HAVE_LINUX_CAPABILITY_H 1" >> config.h
 
-make 
+make
 
 %install
 rm -rf %{buildroot}
