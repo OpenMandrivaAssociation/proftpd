@@ -42,7 +42,6 @@ Patch1:		proftpd-1.3.0-biarch-utmp.diff
 Patch2:		proftpd-use-system-auth-instead-of-pam_unix.diff
 Patch3:		proftpd-1.3.1rc2-FORTIFY_SOURCE_fix.diff
 Patch4:		proftpd-1.3.0-installfix.diff
-Patch5:		proftpd-1.3.1rc2-mod_facl_declare.diff
 Patch7:		proftpd-1.3.0-change_pam_name.diff
 Patch8:		proftpd-1.3.2-mod_time_fix.diff
 Patch23:	mod_gss-1.3.0-shared.diff
@@ -468,7 +467,6 @@ secure file transfer over an SSH2 connection. The mod_sftp module supports:
 %patch2 -p0 -b .pam
 %patch3 -p0 -b .FORTIFY_SOURCE_fix
 %patch4 -p1 -b .installfix
-%patch5 -p0 -b .mod_facl_declare
 %patch7 -p0 -b .change_pam_name
 %patch8 -p0 -b .mod_time_fix
 
