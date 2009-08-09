@@ -2,18 +2,18 @@
 
 %define _localstatedir 	 /var/run
 
-%define mod_gss_version 1.3.1
-%define mod_autohost_version 0.1
+%define mod_gss_version 1.3.2
+%define mod_autohost_version 0.2
 %define mod_case_version 0.3
 %define mod_shaper_version 0.6.5
 %define mod_time_version 2.2.1
-%define mod_vroot_version 0.8.3
+%define mod_vroot_version 0.8.5
 %define mod_sftp_version 0.9.6
 
 Summary:	Professional FTP Server
 Name:		proftpd
-Version:	1.3.2
-Release:	%mkrel 4
+Version:	1.3.2a
+Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
@@ -29,7 +29,7 @@ Source32:	32_mod_shaper.conf
 Source100:	http://prdownloads.sourceforge.net/gssmod/mod_gss-%{mod_gss_version}.tar.gz
 # from http://www.castaglia.org/proftpd/
 Source101:	http://www.castaglia.org/proftpd/modules/proftpd-mod-sftp-%{mod_sftp_version}.tar.gz
-Source102:	http://www.castaglia.org/proftpd/modules/proftpd-mod-autohost-%{mod_autohost_version}.tar.bz2
+Source102:	http://www.castaglia.org/proftpd/modules/proftpd-mod-autohost-%{mod_autohost_version}.tar.gz
 Source103:	http://www.castaglia.org/proftpd/modules/proftpd-mod-case-%{mod_case_version}.tar.bz2
 Source104:	http://www.castaglia.org/proftpd/modules/proftpd-mod-shaper-%{mod_shaper_version}.tar.gz
 Source105:	http://www.castaglia.org/proftpd/modules/proftpd-mod-time-%{mod_time_version}.tar.bz2
@@ -43,8 +43,6 @@ Patch2:		proftpd-use-system-auth-instead-of-pam_unix.diff
 Patch4:		proftpd-1.3.0-installfix.diff
 Patch7:		proftpd-1.3.0-change_pam_name.diff
 Patch8:		proftpd-1.3.2-mod_time_fix.diff
-Patch23:	mod_gss-1.3.0-shared.diff
-Patch24:	proftpd-1.3.0-mod_autohost.diff
 Patch40:	mod_gss-1.3.0-format_not_a_string_literal_and_no_format_arguments.diff
 Patch41:	mod_time-format_not_a_string_literal_and_no_format_arguments.diff
 Patch43:	mod_wrap2-format_not_a_string_literal_and_no_format_arguments.diff
@@ -467,9 +465,6 @@ secure file transfer over an SSH2 connection. The mod_sftp module supports:
 %patch4 -p1 -b .installfix
 %patch7 -p0 -b .change_pam_name
 %patch8 -p0 -b .mod_time_fix
-
-%patch23 -p0 -b .mod_gss
-%patch24 -p0 -b .mod_autohost
 
 %patch40 -p0 -b .format_not_a_string_literal_and_no_format_arguments
 %patch41 -p0 -b .format_not_a_string_literal_and_no_format_arguments
