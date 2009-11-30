@@ -13,7 +13,7 @@
 Summary:	Professional FTP Server
 Name:		proftpd
 Version:	1.3.2b
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
@@ -43,6 +43,7 @@ Patch2:		proftpd-use-system-auth-instead-of-pam_unix.diff
 Patch4:		proftpd-1.3.0-installfix.diff
 Patch7:		proftpd-1.3.0-change_pam_name.diff
 Patch8:		proftpd-1.3.2-mod_time_fix.diff
+Patch9:		proftpd-1.3.2b-CVE-2009-3736.diff
 Patch40:	mod_gss-1.3.0-format_not_a_string_literal_and_no_format_arguments.diff
 Patch41:	mod_time-format_not_a_string_literal_and_no_format_arguments.diff
 Patch43:	mod_wrap2-format_not_a_string_literal_and_no_format_arguments.diff
@@ -465,6 +466,7 @@ secure file transfer over an SSH2 connection. The mod_sftp module supports:
 %patch4 -p1 -b .installfix
 %patch7 -p0 -b .change_pam_name
 %patch8 -p0 -b .mod_time_fix
+%patch9 -p0 -b .CVE-2009-3736
 
 %patch40 -p0 -b .format_not_a_string_literal_and_no_format_arguments
 %patch41 -p0 -b .format_not_a_string_literal_and_no_format_arguments
