@@ -12,12 +12,12 @@
 
 Summary:	Professional FTP Server
 Name:		proftpd
-Version:	1.3.2b
-Release:	%mkrel 2
+Version:	1.3.2c
+Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
-Source0:	ftp://ftp.proftpd.org/distrib/source/proftpd/%{name}-%{version}.tar.gz
+Source0:	ftp://ftp.proftpd.org/distrib/source/%{name}-%{version}.tar.gz
 Source1:	proftpd.logrotate
 Source2: 	proftpd.xinetd
 Source3:	proftpd.init
