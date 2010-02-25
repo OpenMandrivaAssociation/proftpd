@@ -3,17 +3,16 @@
 %define _localstatedir 	 /var/run
 
 %define mod_gss_version 1.3.2
-%define mod_autohost_version 0.2
+%define mod_autohost_version 0.3
 %define mod_case_version 0.3
 %define mod_shaper_version 0.6.5
 %define mod_time_version 2.2.1
 %define mod_vroot_version 0.8.5
-%define mod_sftp_version 0.9.6
 
 Summary:	Professional FTP Server
 Name:		proftpd
-Version:	1.3.2c
-Release:	%mkrel 2
+Version:	1.3.3
+Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
@@ -28,7 +27,6 @@ Source32:	32_mod_shaper.conf
 # http://sourceforge.net/projects/gssmod/
 Source100:	http://prdownloads.sourceforge.net/gssmod/mod_gss-%{mod_gss_version}.tar.gz
 # from http://www.castaglia.org/proftpd/
-Source101:	http://www.castaglia.org/proftpd/modules/proftpd-mod-sftp-%{mod_sftp_version}.tar.gz
 Source102:	http://www.castaglia.org/proftpd/modules/proftpd-mod-autohost-%{mod_autohost_version}.tar.gz
 Source103:	http://www.castaglia.org/proftpd/modules/proftpd-mod-case-%{mod_case_version}.tar.bz2
 Source104:	http://www.castaglia.org/proftpd/modules/proftpd-mod-shaper-%{mod_shaper_version}.tar.gz
@@ -36,17 +34,14 @@ Source105:	http://www.castaglia.org/proftpd/modules/proftpd-mod-time-%{mod_time_
 Source108:	http://www.castaglia.org/proftpd/modules/proftpd-mod-vroot-%{mod_vroot_version}.tar.gz
 Source200:	anonymous.conf
 Patch0:		proftpd-1.3.0-xferstats_logfile_location.diff
-Patch1:		proftpd-1.3.0-biarch-utmp.diff
 # (pixel): i kept the /lib/security/*.so instead of *.so in the patch to have a smaller patch
 # (pixel): spec-helper will clean it up
 Patch2:		proftpd-use-system-auth-instead-of-pam_unix.diff
 Patch4:		proftpd-1.3.0-installfix.diff
 Patch7:		proftpd-1.3.0-change_pam_name.diff
 Patch8:		proftpd-1.3.2-mod_time_fix.diff
-Patch9:		proftpd-1.3.2b-CVE-2009-3736.diff
 Patch40:	mod_gss-1.3.0-format_not_a_string_literal_and_no_format_arguments.diff
 Patch41:	mod_time-format_not_a_string_literal_and_no_format_arguments.diff
-Patch43:	mod_wrap2-format_not_a_string_literal_and_no_format_arguments.diff
 Requires:	pam >= 0.59
 Requires:	setup >= 2.2.0-21mdk
 Requires(post): rpm-helper
@@ -458,19 +453,16 @@ secure file transfer over an SSH2 connection. The mod_sftp module supports:
 
 %prep
 
-%setup -q -n %{name}-%{version} -a100 -a101 -a102 -a103 -a104 -a105 -a108
+%setup -q -n %{name}-%{version} -a100 -a102 -a103 -a104 -a105 -a108
 
 %patch0 -p0 -b .logfile_location
-%patch1 -p0 -b .biarch-utmp
 %patch2 -p0 -b .pam
 %patch4 -p1 -b .installfix
 %patch7 -p0 -b .change_pam_name
 %patch8 -p0 -b .mod_time_fix
-%patch9 -p0 -b .CVE-2009-3736
 
 %patch40 -p0 -b .format_not_a_string_literal_and_no_format_arguments
 %patch41 -p0 -b .format_not_a_string_literal_and_no_format_arguments
-%patch43 -p0 -b .format_not_a_string_literal_and_no_format_arguments
 
 # Mandriva config
 mkdir -p Mandriva
@@ -495,12 +487,6 @@ perl -pi -e "s|\<mysql\.h\>|\<mysql\/mysql\.h\>|g" contrib/mod_sql_mysql.c
 
 export CFLAGS="$CFLAGS -DLDAP_DEPRECATED -DUSE_LDAP_TLS -DHAVE_OPENSSL"
 export LIBS="-L%{_libdir} -lattr"
-
-mv mod_sftp contrib/
-pushd contrib/mod_sftp
-#rm -f configure
-#libtoolize --copy --force; aclocal; autoconf
-popd
 
 pushd mod_gss-%{mod_gss_version}
 perl -pi -e "s|<gssapi.h>|<gssapi/gssapi.h>|" configure*
@@ -979,6 +965,7 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/avahi/services/%{name}.service
 %{_initrddir}/%{name}
 %{_sbindir}/%{name}
+%{_sbindir}/ftpscrub
 %{_sbindir}/ftpshut
 %{_sbindir}/in.ftpd
 %{_sbindir}/in.%{name}
@@ -1169,7 +1156,7 @@ rm -rf %{buildroot}
 
 %files mod_sftp
 %defattr(-,root,root)
-%doc contrib/mod_sftp/mod_sftp.html
+%doc doc/contrib/mod_sftp.html
 %config(noreplace) %{_sysconfdir}/blacklist.dat
 %config(noreplace) %{_sysconfdir}/dhparams.pem
 %config(noreplace) %{_sysconfdir}/%{name}.d/37_mod_sftp.conf
