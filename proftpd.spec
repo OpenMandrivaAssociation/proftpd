@@ -2,17 +2,17 @@
 
 %define _localstatedir 	 /var/run
 
-%define mod_gss_version 1.3.2
+%define mod_gss_version 1.3.3
 %define mod_autohost_version 0.3
-%define mod_case_version 0.3
+%define mod_case_version 0.4
 %define mod_shaper_version 0.6.5
 %define mod_time_version 2.2.1
 %define mod_vroot_version 0.8.5
 
 Summary:	Professional FTP Server
 Name:		proftpd
-Version:	1.3.3
-Release:	%mkrel 3
+Version:	1.3.3c
+Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
@@ -28,7 +28,7 @@ Source32:	32_mod_shaper.conf
 Source100:	http://prdownloads.sourceforge.net/gssmod/mod_gss-%{mod_gss_version}.tar.gz
 # from http://www.castaglia.org/proftpd/
 Source102:	http://www.castaglia.org/proftpd/modules/proftpd-mod-autohost-%{mod_autohost_version}.tar.gz
-Source103:	http://www.castaglia.org/proftpd/modules/proftpd-mod-case-%{mod_case_version}.tar.bz2
+Source103:	http://www.castaglia.org/proftpd/modules/proftpd-mod-case-%{mod_case_version}.tar.gz
 Source104:	http://www.castaglia.org/proftpd/modules/proftpd-mod-shaper-%{mod_shaper_version}.tar.gz
 Source105:	http://www.castaglia.org/proftpd/modules/proftpd-mod-time-%{mod_time_version}.tar.bz2
 Source108:	http://www.castaglia.org/proftpd/modules/proftpd-mod-vroot-%{mod_vroot_version}.tar.gz
@@ -43,6 +43,7 @@ Patch8:		proftpd-1.3.2-mod_time_fix.diff
 Patch9:		proftpd-1.3.2rc3-nostrip.patch
 Patch40:	mod_gss-1.3.0-format_not_a_string_literal_and_no_format_arguments.diff
 Patch41:	mod_time-format_not_a_string_literal_and_no_format_arguments.diff
+Patch42:	proftpd-1.3.3c-no_-ldes425.diff
 Requires:	pam >= 0.59
 Requires:	setup >= 2.2.0-21mdk
 Requires(post): rpm-helper
@@ -465,6 +466,8 @@ secure file transfer over an SSH2 connection. The mod_sftp module supports:
 
 %patch40 -p0 -b .format_not_a_string_literal_and_no_format_arguments
 %patch41 -p0 -b .format_not_a_string_literal_and_no_format_arguments
+%patch42 -p1 -b .no_-ldes425
+
 
 # Mandriva config
 mkdir -p Mandriva
