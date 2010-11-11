@@ -12,7 +12,7 @@
 Summary:	Professional FTP Server
 Name:		proftpd
 Version:	1.3.3c
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
@@ -41,6 +41,7 @@ Patch4:		proftpd-1.3.0-installfix.diff
 Patch7:		proftpd-1.3.0-change_pam_name.diff
 Patch8:		proftpd-1.3.2-mod_time_fix.diff
 Patch9:		proftpd-1.3.2rc3-nostrip.patch
+Patch10:	proftpd-1.3.3c-verbose_tests.diff
 Patch40:	mod_gss-1.3.0-format_not_a_string_literal_and_no_format_arguments.diff
 Patch41:	mod_time-format_not_a_string_literal_and_no_format_arguments.diff
 Patch42:	proftpd-1.3.3c-no_-ldes425.diff
@@ -72,6 +73,9 @@ Conflicts:	wu-ftpd
 Conflicts:	ncftpd
 Conflicts:	beroftpd
 Conflicts:	anonftp
+# for the test suite
+BuildRequires:	check-devel
+BuildRequires:	perl-Test-Unit
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
@@ -463,11 +467,11 @@ secure file transfer over an SSH2 connection. The mod_sftp module supports:
 %patch7 -p0 -b .change_pam_name
 %patch8 -p0 -b .mod_time_fix
 %patch9 -p1 -b .debug
+%patch10 -p0 -b .verbose_tests
 
 %patch40 -p0 -b .format_not_a_string_literal_and_no_format_arguments
 %patch41 -p0 -b .format_not_a_string_literal_and_no_format_arguments
 %patch42 -p1 -b .no_-ldes425
-
 
 # Mandriva config
 mkdir -p Mandriva
@@ -540,13 +544,17 @@ done
     --enable-shadow \
     --enable-ctrls \
     --with-shared="mod_ratio:mod_tls:mod_radius:mod_ldap:mod_sql:mod_sql_mysql:mod_sql_postgres:mod_rewrite:mod_gss:mod_load:mod_ctrls_admin:mod_quotatab:mod_quotatab_file:mod_quotatab_ldap:mod_quotatab_sql:mod_quotatab_radius:mod_site_misc:mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_autohost:mod_case:mod_shaper:mod_ban:mod_vroot:mod_sftp:mod_time:mod_ifsession" \
-    --with-modules="mod_readme:mod_auth_pam"
+    --with-modules="mod_readme:mod_auth_pam" \
+    --enable-tests
 
 # libcap hack
 perl -pi -e "s|/lib/libcap|/blabla|g" Make.rules
 echo "#define HAVE_LINUX_CAPABILITY_H 1" >> config.h
 
-make
+%make
+
+%check
+make check
 
 %install
 rm -rf %{buildroot}
