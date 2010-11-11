@@ -76,6 +76,7 @@ Conflicts:	anonftp
 # for the test suite
 BuildRequires:	check-devel
 BuildRequires:	perl-Test-Unit
+BuildRequires:	perl-Error
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
