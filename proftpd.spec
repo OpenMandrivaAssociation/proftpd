@@ -74,9 +74,8 @@ Conflicts:	ncftpd
 Conflicts:	beroftpd
 Conflicts:	anonftp
 # for the test suite
-BuildRequires:	check-devel
-BuildRequires:	perl-Test-Unit
-BuildRequires:	perl-Error
+# disabled for now but kept here for reference
+#BuildRequires:	check-devel perl-Test-Unit perl-Error
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
@@ -545,8 +544,9 @@ done
     --enable-shadow \
     --enable-ctrls \
     --with-shared="mod_ratio:mod_tls:mod_radius:mod_ldap:mod_sql:mod_sql_mysql:mod_sql_postgres:mod_rewrite:mod_gss:mod_load:mod_ctrls_admin:mod_quotatab:mod_quotatab_file:mod_quotatab_ldap:mod_quotatab_sql:mod_quotatab_radius:mod_site_misc:mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_autohost:mod_case:mod_shaper:mod_ban:mod_vroot:mod_sftp:mod_time:mod_ifsession" \
-    --with-modules="mod_readme:mod_auth_pam" \
-    --enable-tests
+    --with-modules="mod_readme:mod_auth_pam"
+
+#    --enable-tests
 
 # libcap hack
 perl -pi -e "s|/lib/libcap|/blabla|g" Make.rules
@@ -554,8 +554,8 @@ echo "#define HAVE_LINUX_CAPABILITY_H 1" >> config.h
 
 %make
 
-%check
-make check
+#%%check
+#make check
 
 %install
 rm -rf %{buildroot}
