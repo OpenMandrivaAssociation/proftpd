@@ -11,8 +11,8 @@
 
 Summary:	Professional FTP Server
 Name:		proftpd
-Version:	1.3.3c
-Release:	%mkrel 4
+Version:	1.3.3d
+Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
