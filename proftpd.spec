@@ -5,14 +5,13 @@
 %define mod_gss_version 1.3.3
 %define mod_autohost_version 0.3
 %define mod_case_version 0.4
-%define mod_shaper_version 0.6.5
 %define mod_time_version 2.2.1
-%define mod_vroot_version 0.8.5
+%define mod_vroot_version 0.9.2
 
 Summary:	Professional FTP Server
 Name:		proftpd
 Version:	1.3.3d
-Release:	%mkrel 2
+Release:	%mkrel 3
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
@@ -29,7 +28,6 @@ Source100:	http://prdownloads.sourceforge.net/gssmod/mod_gss-%{mod_gss_version}.
 # from http://www.castaglia.org/proftpd/
 Source102:	http://www.castaglia.org/proftpd/modules/proftpd-mod-autohost-%{mod_autohost_version}.tar.gz
 Source103:	http://www.castaglia.org/proftpd/modules/proftpd-mod-case-%{mod_case_version}.tar.gz
-Source104:	http://www.castaglia.org/proftpd/modules/proftpd-mod-shaper-%{mod_shaper_version}.tar.gz
 Source105:	http://www.castaglia.org/proftpd/modules/proftpd-mod-time-%{mod_time_version}.tar.bz2
 Source108:	http://www.castaglia.org/proftpd/modules/proftpd-mod-vroot-%{mod_vroot_version}.tar.gz
 Source200:	anonymous.conf
@@ -42,6 +40,7 @@ Patch7:		proftpd-1.3.0-change_pam_name.diff
 Patch8:		proftpd-1.3.2-mod_time_fix.diff
 Patch9:		proftpd-1.3.2rc3-nostrip.patch
 Patch10:	proftpd-1.3.3c-verbose_tests.diff
+Patch11:	proftpd-1.3.3d-CVE-2011-1137.diff
 Patch40:	mod_gss-1.3.0-format_not_a_string_literal_and_no_format_arguments.diff
 Patch41:	mod_time-format_not_a_string_literal_and_no_format_arguments.diff
 Patch42:	proftpd-1.3.3c-no_-ldes425.diff
@@ -459,7 +458,7 @@ secure file transfer over an SSH2 connection. The mod_sftp module supports:
 
 %prep
 
-%setup -q -n %{name}-%{version} -a100 -a102 -a103 -a104 -a105 -a108
+%setup -q -n %{name}-%{version} -a100 -a102 -a103 -a105 -a108
 
 %patch0 -p0 -b .logfile_location
 %patch2 -p0 -b .pam
@@ -468,6 +467,7 @@ secure file transfer over an SSH2 connection. The mod_sftp module supports:
 %patch8 -p0 -b .mod_time_fix
 %patch9 -p1 -b .debug
 %patch10 -p0 -b .verbose_tests
+%patch11 -p1 -b .CVE-2011-1137
 
 %patch40 -p0 -b .format_not_a_string_literal_and_no_format_arguments
 %patch41 -p0 -b .format_not_a_string_literal_and_no_format_arguments
@@ -1128,7 +1128,7 @@ rm -rf %{buildroot}
 
 %files mod_shaper
 %defattr(-,root,root)
-%doc mod_shaper/mod_shaper.html
+%doc doc/contrib/mod_shaper.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/32_mod_shaper.conf
 %{_libdir}/%{name}/mod_shaper.so
 
