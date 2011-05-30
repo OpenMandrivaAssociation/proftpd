@@ -10,8 +10,8 @@
 
 Summary:	Professional FTP Server
 Name:		proftpd
-Version:	1.3.3d
-Release:	%mkrel 4
+Version:	1.3.3e
+Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
@@ -40,7 +40,6 @@ Patch7:		proftpd-1.3.0-change_pam_name.diff
 Patch8:		proftpd-1.3.2-mod_time_fix.diff
 Patch9:		proftpd-1.3.2rc3-nostrip.patch
 Patch10:	proftpd-1.3.3c-verbose_tests.diff
-Patch11:	proftpd-1.3.3d-CVE-2011-1137.diff
 Patch40:	mod_gss-1.3.0-format_not_a_string_literal_and_no_format_arguments.diff
 Patch41:	mod_time-format_not_a_string_literal_and_no_format_arguments.diff
 Patch42:	proftpd-1.3.3c-no_-ldes425.diff
@@ -54,7 +53,7 @@ BuildRequires:	cap-devel
 BuildRequires:	gettext-devel
 BuildRequires:	libacl-devel
 BuildRequires:	libattr-devel
-BuildRequires:	libkrb-devel
+BuildRequires:	krb5-devel
 BuildRequires:	libtool
 BuildRequires:	libtool-devel
 BuildRequires:	mysql-devel
@@ -63,14 +62,15 @@ BuildRequires:	openldap-devel
 BuildRequires:	openssl-devel
 BuildRequires:	pam-devel
 BuildRequires:	pkgconfig
-BuildRequires:	postgresql-devel
+BuildRequires:	postgresql-libs-devel
 BuildRequires:	sasl-plug-gssapi
+BuildRequires:	sqlite3-devel
 BuildRequires:	tcp_wrappers-devel
 BuildRequires:	zlib-devel
 Provides:	ftpserver
 Conflicts:	wu-ftpd
+Conflicts:	pure-ftpd
 Conflicts:	ncftpd
-Conflicts:	beroftpd
 Conflicts:	anonftp
 # for the test suite
 # disabled for now but kept here for reference
@@ -96,9 +96,9 @@ This package contains the development headers for ProFTPD
 %package	mod_ctrls_admin
 Summary:	Module implementing admin control handlers
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_ctrls_admin
 This module implements administrative control actions for the ftpdctl program.
@@ -106,9 +106,9 @@ This module implements administrative control actions for the ftpdctl program.
 %package	mod_ifsession
 Summary:	Module supporting conditional per-user/group/class configuration contexts
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_ifsession
 Module supporting conditional per-user/group/class configuration contexts
@@ -116,9 +116,9 @@ Module supporting conditional per-user/group/class configuration contexts
 %package	mod_ldap
 Summary:	LDAP password lookup module for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_ldap
 LDAP password lookup module for ProFTPD
@@ -126,9 +126,9 @@ LDAP password lookup module for ProFTPD
 %package	mod_quotatab
 Summary:	Module for managing FTP byte/file quotas via centralized tables
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 Requires:	%{name}-mod_quotatab_driver = %{version}-%{release}
 
 %description	mod_quotatab
@@ -137,8 +137,8 @@ Module for managing FTP byte/file quotas via centralized tables
 %package	mod_quotatab_file
 Summary:	Sub-module for managing quota data via file-based tables
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
 Requires:	%{name}-mod_quotatab = %{version}-%{release}
 Provides:	%{name}-mod_quotatab_driver = %{version}-%{release}
 
@@ -148,8 +148,8 @@ Sub-module for managing quota data via file-based tables
 %package	mod_quotatab_ldap
 Summary:	Sub-module for obtaining quota information from an LDAP directory
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
 Requires:	%{name}-mod_quotatab = %{version}-%{release}
 Provides:	%{name}-mod_quotatab_driver = %{version}-%{release}
 
@@ -159,8 +159,8 @@ Sub-module for obtaining quota information from an LDAP directory
 %package	mod_quotatab_sql
 Summary:	Sub-module for managing quota data via SQL-based tables
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
 Requires:	%{name}-mod_quotatab = %{version}-%{release}
 Provides:	%{name}-mod_quotatab_driver = %{version}-%{release}
 
@@ -170,8 +170,8 @@ Sub-module for managing quota data via SQL-based tables
 %package	mod_quotatab_radius
 Summary:	Sub-module for managing quota data via radius
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
 Requires:	%{name}-mod_quotatab = %{version}-%{release}
 Provides:	%{name}-mod_quotatab_driver = %{version}-%{release}
 
@@ -181,9 +181,9 @@ Sub-module for managing quota data via radius
 %package	mod_radius
 Summary:	Module for RADIUS authentication and accounting
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_radius
 Module for RADIUS authentication and accounting
@@ -191,9 +191,9 @@ Module for RADIUS authentication and accounting
 %package	mod_ratio
 Summary:	Support upload/download ratios
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_ratio
 Support upload/download ratios
@@ -201,9 +201,9 @@ Support upload/download ratios
 %package	mod_rewrite
 Summary:	Module for rewriting FTP commands
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_rewrite
 Module for rewriting FTP commands
@@ -211,9 +211,9 @@ Module for rewriting FTP commands
 %package	mod_site_misc
 Summary:	Module implementing miscellaneous SITE commands
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_site_misc
 Module implementing miscellaneous SITE commands
@@ -221,9 +221,9 @@ Module implementing miscellaneous SITE commands
 %package	mod_sql
 Summary:	SQL frontend
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 Requires:	%{name}-mod_sql_driver = %{version}-%{release}
 
 %description	mod_sql
@@ -232,8 +232,8 @@ SQL frontend
 %package	mod_sql_mysql
 Summary:	Support for connecting to MySQL databases
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
 Requires:	%{name}-mod_sql = %{version}-%{release}
 Provides:	%{name}-mod_sql_driver = %{version}-%{release}
 
@@ -243,28 +243,63 @@ Support for connecting to MySQL databases
 %package	mod_sql_postgres
 Summary:	Support for connecting to Postgres databases
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
 Requires:	%{name}-mod_sql = %{version}-%{release}
 Provides:	%{name}-mod_sql_driver = %{version}-%{release}
 
 %description	mod_sql_postgres
 Support for connecting to Postgres databases
 
+%package	mod_sql_sqlite
+Summary:	Support for connecting to SQLite3 databases
+Group:		System/Servers
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name}-mod_sql = %{version}-%{release}
+Provides:	%{name}-mod_sql_driver = %{version}-%{release}
+
+%description	mod_sql_sqlite
+Support for connecting to SQLite3 databases
+
+%package	mod_sql_passwd
+Summary:	Various SQL password handlers
+Group:		System/Servers
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name}-mod_sql = %{version}-%{release}
+Provides:	%{name}-mod_sql_driver = %{version}-%{release}
+
+%description	mod_sql_passwd
+Various SQL password handlers
+
 %package	mod_tls
 Summary:	An RFC2228 SSL/TLS module for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_tls
 An RFC2228 SSL/TLS module for ProFTPD
 
+%package	mod_tls_shmcache
+Summary:	A module which provides a shared SSL session cache using SysV shared memory
+Group:		System/Servers
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
+Requires:	%{name}-mod_tls = %{version}-%{release}
+
+%description	mod_tls_shmcache
+This submodule provides a SysV shared memory-based implementation of an
+external SSL session cache for use by the mod_tls module's TLSSessionCache
+directive.
+
 #%package	mod_facl
 #Summary:	POSIX ACL checking code (aka POSIX.1e hell)
 #Group:		System/Servers
-#Requires:	%{name} = %{version}-%{release}
+#Requires:	%{name} >= %{version}-%{release}
 #
 #%description	mod_facl
 #POSIX ACL checking code (aka POSIX.1e hell)
@@ -272,9 +307,9 @@ An RFC2228 SSL/TLS module for ProFTPD
 %package	mod_autohost
 Summary:	An autohost module for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_autohost
 For sites that run a large number of <VirtualHost>s for proftpd, it can be
@@ -298,9 +333,9 @@ only reads and uses the needed configuration.
 %package	mod_case
 Summary:	Makes ProFTPD case insensitive
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_case
 The mod_case module is designed to help ProFTPD be case-insensitive, for those
@@ -315,9 +350,9 @@ directory again, this time looking for case-insensitive matches.
 %package	mod_gss
 Summary:	A Kerberos 5 GSS module for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_gss
 A Kerberos 5 GSS module for ProFTPD
@@ -325,9 +360,9 @@ A Kerberos 5 GSS module for ProFTPD
 %package	mod_load
 Summary:	A module that determines average load for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_load
 The code for determining load average on a given system is hairy, to say the
@@ -339,9 +374,9 @@ please contact the author as soon as possible.
 %package	mod_shaper
 Summary:	A shaping module for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_shaper
 The mod_shaper module is designed to split overall rates, both download and
@@ -354,9 +389,9 @@ commands.
 %package	mod_time
 Summary:	Limits acces based on the time of day and/or the day of the week
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_time
 This module is designed to allow for limiting FTP commands based on the time of
@@ -366,9 +401,9 @@ this module follows the directive explanations.
 %package	mod_wrap
 Summary:	Provides tcpwrapper-like access control rules for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 Requires:	%{name}-mod_wrap_driver = %{version}-%{release}
 Requires:	tcp_wrappers
 
@@ -387,9 +422,9 @@ table information in various formats:
 %package	mod_wrap_file
 Summary:	A file-specific driver for the mod_wrap module for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 Provides:	%{name}-mod_wrap_driver = %{version}-%{release}
 
 %description	mod_wrap_file
@@ -399,9 +434,9 @@ access control information in files.
 %package	mod_wrap_sql
 Summary:	A SQL database driver for the mod_wrap module for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 Provides:	%{name}-mod_wrap_driver = %{version}-%{release}
 
 %description	mod_wrap_sql
@@ -411,9 +446,9 @@ access control information in SQL tables.
 %package	mod_ban
 Summary:	Adds dynamic "ban" lists to ProFTPD
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_ban
 The mod_ban module is designed to add dynamic "ban" lists to proftpd. A ban
@@ -425,9 +460,9 @@ triggered based on configurable criteria.
 %package	mod_vroot
 Summary:	Adds virtual chroot capability to ProFTPD
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_vroot
 The purpose of this module to is to implement a virtual chroot capability that
@@ -437,9 +472,9 @@ by using ProFTPD's FS API, available as of 1.2.8rc1.
 %package	mod_sftp
 Summary:	Implements the SSH2 protocol and its SFTP subsystem for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} = %{version}-%{release}
-Requires(preun): %{name} = %{version}-%{release}
-Requires:	%{name} = %{version}-%{release}
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_sftp
 The mod_sftp module implements the SSH2 protocol and its SFTP subsystem, for
@@ -456,6 +491,33 @@ secure file transfer over an SSH2 connection. The mod_sftp module supports:
  o Configurable traffic analysis protection
  o Passphrase-protected host keys 
 
+%package	mod_sftp_pam
+Summary:	A module which provides an SSH2 "keyboard-interactive" driver using PAM
+Group:		System/Servers
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
+Requires:	%{name}-mod_sftp >= %{version}-%{release}
+
+%description	mod_sftp_pam
+The mod_sftp_pam module provides support for the "SSH Keyboard-Interactive
+Authentication" RFC (RFC4256).
+
+%package	mod_sftp_sql
+Summary:	SQL backend module for retrieving authorized keys
+Group:		System/Servers
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
+Requires:	%{name}-mod_sftp >= %{version}-%{release}
+Requires:	%{name}-mod_sql >= %{version}-%{release}
+
+%description	mod_sftp_sql
+The mod_sftp module for ProFTPD can support different storage formats for its
+user- and host-based authorized keys. By default, the mod_sftp module supports
+storing authorized keys in flats. This mod_sftp_sql module allows for
+authorized SSH keys to be stored in SQL tables.
+
 %prep
 
 %setup -q -n %{name}-%{version} -a100 -a102 -a103 -a105 -a108
@@ -467,7 +529,6 @@ secure file transfer over an SSH2 connection. The mod_sftp module supports:
 %patch8 -p0 -b .mod_time_fix
 %patch9 -p1 -b .debug
 %patch10 -p0 -b .verbose_tests
-%patch11 -p1 -b .CVE-2011-1137
 
 %patch40 -p0 -b .format_not_a_string_literal_and_no_format_arguments
 %patch41 -p0 -b .format_not_a_string_literal_and_no_format_arguments
@@ -543,7 +604,7 @@ done
     --enable-ipv6 \
     --enable-shadow \
     --enable-ctrls \
-    --with-shared="mod_ratio:mod_tls:mod_radius:mod_ldap:mod_sql:mod_sql_mysql:mod_sql_postgres:mod_rewrite:mod_gss:mod_load:mod_ctrls_admin:mod_quotatab:mod_quotatab_file:mod_quotatab_ldap:mod_quotatab_sql:mod_quotatab_radius:mod_site_misc:mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_autohost:mod_case:mod_shaper:mod_ban:mod_vroot:mod_sftp:mod_time:mod_ifsession" \
+    --with-shared="mod_ratio:mod_tls:mod_tls_shmcache:mod_radius:mod_ldap:mod_sql:mod_sql_mysql:mod_sql_postgres:mod_sql_sqlite:mod_sql_passwd:mod_rewrite:mod_gss:mod_load:mod_ctrls_admin:mod_quotatab:mod_quotatab_file:mod_quotatab_ldap:mod_quotatab_sql:mod_quotatab_radius:mod_site_misc:mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_autohost:mod_case:mod_shaper:mod_ban:mod_vroot:mod_sftp:mod_sftp_pam:mod_sftp_sql:mod_time:mod_ifsession" \
     --with-modules="mod_readme:mod_auth_pam"
 
 #    --enable-tests
@@ -603,10 +664,13 @@ ln -snf %{name} %{buildroot}%{_sbindir}/in.ftpd
 # config
 echo "LoadModule mod_ctrls_admin.c" > %{buildroot}%{_sysconfdir}/%{name}.d/10_mod_ctrls_admin.conf
 echo "LoadModule mod_tls.c" > %{buildroot}%{_sysconfdir}/%{name}.d/11_mod_tls.conf
+echo "LoadModule mod_tls_shmcache.c" > %{buildroot}%{_sysconfdir}/%{name}.d/12_mod_tls_shmcache.conf
 echo "LoadModule mod_sql.c" > %{buildroot}%{_sysconfdir}/%{name}.d/12_mod_sql.conf
 echo "LoadModule mod_ldap.c" > %{buildroot}%{_sysconfdir}/%{name}.d/13_mod_ldap.conf
 echo "LoadModule mod_sql_mysql.c" > %{buildroot}%{_sysconfdir}/%{name}.d/14_mod_sql_mysql.conf
 echo "LoadModule mod_sql_postgres.c" > %{buildroot}%{_sysconfdir}/%{name}.d/15_mod_sql_postgres.conf
+echo "LoadModule mod_sql_sqlite.c" > %{buildroot}%{_sysconfdir}/%{name}.d/16_mod_sql_sqlite.conf
+echo "LoadModule mod_sql_passwd.c" > %{buildroot}%{_sysconfdir}/%{name}.d/17_mod_sql_passwd.conf
 echo "LoadModule mod_quotatab.c" > %{buildroot}%{_sysconfdir}/%{name}.d/16_mod_quotatab.conf
 echo "LoadModule mod_quotatab_file.c" > %{buildroot}%{_sysconfdir}/%{name}.d/17_mod_quotatab_file.conf
 echo "LoadModule mod_quotatab_ldap.c" > %{buildroot}%{_sysconfdir}/%{name}.d/18_mod_quotatab_ldap.conf
@@ -629,6 +693,8 @@ echo "LoadModule mod_time.c" > %{buildroot}%{_sysconfdir}/%{name}.d/34_mod_time.
 echo "LoadModule mod_ban.c" > %{buildroot}%{_sysconfdir}/%{name}.d/35_mod_ban.conf
 echo "LoadModule mod_vroot.c" > %{buildroot}%{_sysconfdir}/%{name}.d/36_mod_vroot.conf
 echo "LoadModule mod_sftp.c" > %{buildroot}%{_sysconfdir}/%{name}.d/37_mod_sftp.conf
+echo "LoadModule mod_sftp_pam.c" > %{buildroot}%{_sysconfdir}/%{name}.d/38_mod_sftp_pam.conf
+echo "LoadModule mod_sftp_sql.c" > %{buildroot}%{_sysconfdir}/%{name}.d/39_mod_sftp_sql.conf
 
 cat > %{buildroot}%{_sysconfdir}/%{name}.d/99_mod_ifsession.conf << EOF
 # keep this module the last one
@@ -671,14 +737,19 @@ list of the modules that are compiled as DSO's:
  o mod_sql.so              <- NEW
  o mod_sql_mysql.so        <- NEW
  o mod_sql_postgres.so     <- NEW
+ o mod_sql_sqlite.so       <- NEW
+ o mod_sql_passwd.so       <- NEW
  o mod_time.so             <- NEW
  o mod_tls.so
+ o mod_tls_shmcache.so     <- NEW
  o mod_wrap2.so            <- NEW
  o mod_wrap2_file.so       <- NEW
  o mod_wrap2_sql.so        <- NEW
  o mod_vroot.so            <- NEW
  o mod_sftp                <- NEW
- 
+ o mod_sftp_pam            <- NEW
+ o mod_sftp_sql            <- NEW
+
 anonymous access configuration
 ------------------------------
 Starting with 1.3.0-3mdv2007.1, there is no proftpd-anonymous package anymore.
@@ -731,226 +802,274 @@ if [ -x /usr/sbin/xinetd ];then
 %_post_service xinetd
 fi
 
-%post -n %{name}-mod_autohost
+%post mod_autohost
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_autohost
+
+%preun mod_autohost
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_case
+%post mod_case
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_case
+
+%preun mod_case
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_ctrls_admin
+%post mod_ctrls_admin
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_ctrls_admin
+
+%preun mod_ctrls_admin
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-#%post -n %{name}-mod_facl
+#%post mod_facl
 #service proftpd condrestart > /dev/null 2>/dev/null || :
 #    
-#%preun -n %{name}-mod_facl
+#%preun mod_facl
 #if [ "$1" = 0 ]; then
 #    service proftpd condrestart > /dev/null 2>/dev/null || :
 #fi
 
-%post -n %{name}-mod_gss
+%post mod_gss
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_gss
+
+%preun mod_gss
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_ifsession
+%post mod_ifsession
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_ifsession
+
+%preun mod_ifsession
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_ldap
+%post mod_ldap
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_ldap
+
+%preun mod_ldap
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_load
+%post mod_load
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_load
+
+%preun mod_load
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_quotatab
+%post mod_quotatab
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_quotatab
+
+%preun mod_quotatab
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_quotatab_file
+%post mod_quotatab_file
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_quotatab_file
+
+%preun mod_quotatab_file
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_quotatab_ldap
+%post mod_quotatab_ldap
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_quotatab_ldap
+
+%preun mod_quotatab_ldap
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_quotatab_sql
+%post mod_quotatab_sql
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_quotatab_sql
+
+%preun mod_quotatab_sql
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_quotatab_radius
+%post mod_quotatab_radius
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_quotatab_radius
+
+%preun mod_quotatab_radius
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_radius
+%post mod_radius
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_radius
+
+%preun mod_radius
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_ratio
+%post mod_ratio
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_ratio
+
+%preun mod_ratio
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_rewrite
+%post mod_rewrite
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_rewrite
+
+%preun mod_rewrite
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_shaper
+%post mod_shaper
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_shaper
+
+%preun mod_shaper
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_site_misc
+%post mod_site_misc
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_site_misc
+
+%preun mod_site_misc
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_sql_mysql
+%post mod_sql
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_sql_mysql
+
+%preun mod_sql
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_sql
+%post mod_sql_mysql
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_sql
+
+%preun mod_sql_mysql
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_time
+%post mod_sql_postgres
 service proftpd condrestart > /dev/null 2>/dev/null || :
 
-%preun -n %{name}-mod_time
+%preun mod_sql_postgres
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_tls
+%post mod_sql_sqlite
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_tls
+
+%preun mod_sql_sqlite
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_wrap_file
+%post mod_sql_passwd
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_wrap_file
+
+%preun mod_sql_passwd
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_wrap
+%post mod_time
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_wrap
+
+%preun mod_time
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_wrap_sql
+%post mod_tls
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_wrap_sql
+
+%preun mod_tls
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_ban
+%post mod_tls_shmcache
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_ban
+
+%preun mod_tls_shmcache
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_vroot
+%post mod_wrap_file
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_vroot
+
+%preun mod_wrap_file
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%post -n %{name}-mod_sftp
+%post mod_wrap
 service proftpd condrestart > /dev/null 2>/dev/null || :
-    
-%preun -n %{name}-mod_sftp
+
+%preun mod_wrap
+if [ "$1" = 0 ]; then
+    service proftpd condrestart > /dev/null 2>/dev/null || :
+fi
+
+%post mod_wrap_sql
+service proftpd condrestart > /dev/null 2>/dev/null || :
+
+%preun mod_wrap_sql
+if [ "$1" = 0 ]; then
+    service proftpd condrestart > /dev/null 2>/dev/null || :
+fi
+
+%post mod_ban
+service proftpd condrestart > /dev/null 2>/dev/null || :
+
+%preun mod_ban
+if [ "$1" = 0 ]; then
+    service proftpd condrestart > /dev/null 2>/dev/null || :
+fi
+
+%post mod_vroot
+service proftpd condrestart > /dev/null 2>/dev/null || :
+
+%preun mod_vroot
+if [ "$1" = 0 ]; then
+    service proftpd condrestart > /dev/null 2>/dev/null || :
+fi
+
+%post mod_sftp
+service proftpd condrestart > /dev/null 2>/dev/null || :
+
+%preun mod_sftp
+if [ "$1" = 0 ]; then
+    service proftpd condrestart > /dev/null 2>/dev/null || :
+fi
+
+%post mod_sftp_pam
+service proftpd condrestart > /dev/null 2>/dev/null || :
+
+%preun mod_sftp_pam
+if [ "$1" = 0 ]; then
+    service proftpd condrestart > /dev/null 2>/dev/null || :
+fi
+
+%post mod_sftp_sql
+service proftpd condrestart > /dev/null 2>/dev/null || :
+
+%preun mod_sftp_sql
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
@@ -1091,11 +1210,27 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/%{name}.d/15_mod_sql_postgres.conf
 %{_libdir}/%{name}/mod_sql_postgres.so
 
+%files mod_sql_sqlite
+%defattr(-,root,root)
+%config(noreplace) %{_sysconfdir}/%{name}.d/16_mod_sql_sqlite.conf
+%{_libdir}/%{name}/mod_sql_sqlite.so
+
+%files mod_sql_passwd
+%defattr(-,root,root)
+%config(noreplace) %{_sysconfdir}/%{name}.d/17_mod_sql_passwd.conf
+%{_libdir}/%{name}/mod_sql_passwd.so
+
 %files mod_tls
 %defattr(-,root,root)
 %doc doc/contrib/mod_tls.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/11_mod_tls.conf
 %{_libdir}/%{name}/mod_tls.so
+
+%files mod_tls_shmcache
+%defattr(-,root,root)
+%doc doc/contrib/mod_tls_shmcache.html
+%config(noreplace) %{_sysconfdir}/%{name}.d/12_mod_tls_shmcache.conf
+%{_libdir}/%{name}/mod_tls_shmcache.so
 
 #%files mod_facl
 #%defattr(-,root,root)
@@ -1175,3 +1310,15 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/dhparams.pem
 %config(noreplace) %{_sysconfdir}/%{name}.d/37_mod_sftp.conf
 %{_libdir}/%{name}/mod_sftp.so
+
+%files mod_sftp_pam
+%defattr(-,root,root)
+%doc doc/contrib/mod_sftp_pam.html
+%config(noreplace) %{_sysconfdir}/%{name}.d/38_mod_sftp_pam.conf
+%{_libdir}/%{name}/mod_sftp_pam.so
+
+%files mod_sftp_sql
+%defattr(-,root,root)
+%doc doc/contrib/mod_sftp_sql.html
+%config(noreplace) %{_sysconfdir}/%{name}.d/39_mod_sftp_sql.conf
+%{_libdir}/%{name}/mod_sftp_sql.so
