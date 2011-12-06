@@ -10,7 +10,7 @@
 
 Summary:	Professional FTP Server
 Name:		proftpd
-Version:	1.3.3e
+Version:	1.3.4a
 Release:	%mkrel 1
 License:	GPL
 Group:		System/Servers
@@ -38,8 +38,8 @@ Patch2:		proftpd-use-system-auth-instead-of-pam_unix.diff
 Patch4:		proftpd-1.3.0-installfix.diff
 Patch7:		proftpd-1.3.0-change_pam_name.diff
 Patch8:		proftpd-1.3.2-mod_time_fix.diff
-Patch9:		proftpd-1.3.2rc3-nostrip.patch
 Patch10:	proftpd-1.3.3c-verbose_tests.diff
+Patch11:	proftpd-1.3.4a-mod_autohost_buildfix.diff
 Patch40:	mod_gss-1.3.0-format_not_a_string_literal_and_no_format_arguments.diff
 Patch41:	mod_time-format_not_a_string_literal_and_no_format_arguments.diff
 Patch42:	proftpd-1.3.3c-no_-ldes425.diff
@@ -67,6 +67,8 @@ BuildRequires:	sasl-plug-gssapi
 BuildRequires:	sqlite3-devel
 BuildRequires:	tcp_wrappers-devel
 BuildRequires:	zlib-devel
+BuildRequires:	libmemcached-devel >= 0.41
+BuildRequires:	pcre-devel
 Provides:	ftpserver
 Conflicts:	wu-ftpd
 Conflicts:	pure-ftpd
@@ -296,6 +298,19 @@ This submodule provides a SysV shared memory-based implementation of an
 external SSL session cache for use by the mod_tls module's TLSSessionCache
 directive.
 
+%package	mod_tls_memcache
+Summary:	A module which provides a shared SSL session cache using memcached servers
+Group:		System/Servers
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
+Requires:	%{name}-mod_tls = %{version}-%{release}
+Suggests:	memcached
+
+%description	mod_tls_memcache
+This submodule a memcached-based implementation of an external SSL session
+cache for use by the mod_tls module's TLSSessionCache directive.
+
 #%package	mod_facl
 #Summary:	POSIX ACL checking code (aka POSIX.1e hell)
 #Group:		System/Servers
@@ -518,6 +533,17 @@ user- and host-based authorized keys. By default, the mod_sftp module supports
 storing authorized keys in flats. This mod_sftp_sql module allows for
 authorized SSH keys to be stored in SQL tables.
 
+%package	mod_memcache
+Summary:	A module for managing memcache data
+Group:		System/Servers
+Requires(post): %{name} >= %{version}-%{release}
+Requires(preun): %{name} >= %{version}-%{release}
+Requires:	%{name} >= %{version}-%{release}
+
+%description	mod_memcache
+The mod_memcache module enables ProFTPD support for caching data in memcached
+servers, using the libmemcached client library.
+
 %prep
 
 %setup -q -n %{name}-%{version} -a100 -a102 -a103 -a105 -a108
@@ -527,8 +553,8 @@ authorized SSH keys to be stored in SQL tables.
 %patch4 -p1 -b .installfix
 %patch7 -p0 -b .change_pam_name
 %patch8 -p0 -b .mod_time_fix
-%patch9 -p1 -b .debug
 %patch10 -p0 -b .verbose_tests
+%patch11 -p0 -b .mod_autohost_buildfix
 
 %patch40 -p0 -b .format_not_a_string_literal_and_no_format_arguments
 %patch41 -p0 -b .format_not_a_string_literal_and_no_format_arguments
@@ -604,8 +630,10 @@ done
     --enable-ipv6 \
     --enable-shadow \
     --enable-ctrls \
-    --with-shared="mod_ratio:mod_tls:mod_tls_shmcache:mod_radius:mod_ldap:mod_sql:mod_sql_mysql:mod_sql_postgres:mod_sql_sqlite:mod_sql_passwd:mod_rewrite:mod_gss:mod_load:mod_ctrls_admin:mod_quotatab:mod_quotatab_file:mod_quotatab_ldap:mod_quotatab_sql:mod_quotatab_radius:mod_site_misc:mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_autohost:mod_case:mod_shaper:mod_ban:mod_vroot:mod_sftp:mod_sftp_pam:mod_sftp_sql:mod_time:mod_ifsession" \
-    --with-modules="mod_readme:mod_auth_pam"
+    --with-shared="mod_ratio:mod_tls:mod_tls_shmcache:mod_radius:mod_ldap:mod_sql:mod_sql_mysql:mod_sql_postgres:mod_sql_sqlite:mod_sql_passwd:mod_rewrite:mod_gss:mod_load:mod_ctrls_admin:mod_quotatab:mod_quotatab_file:mod_quotatab_ldap:mod_quotatab_sql:mod_quotatab_radius:mod_site_misc:mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_autohost:mod_case:mod_shaper:mod_ban:mod_vroot:mod_sftp:mod_sftp_pam:mod_sftp_sql:mod_time:mod_ifsession:mod_memcache:mod_tls_memcache" \
+    --with-modules="mod_readme:mod_auth_pam" \
+    --disable-strip \
+    --enable-pcre
 
 #    --enable-tests
 
@@ -627,7 +655,6 @@ install -d %{buildroot}%{_sysconfdir}/logrotate.d
 install -d %{buildroot}%{_sysconfdir}/%{name}.d
 install -d %{buildroot}%{_sysconfdir}/pam.d
 install -d %{buildroot}%{_sysconfdir}/xinetd.d
-install -d %{buildroot}%{_sysconfdir}/avahi/services
 install -d %{buildroot}/var/ftp/pub
 install -d %{buildroot}/var/log/%{name}
 install -d %{buildroot}/var/run/%{name}
@@ -652,7 +679,6 @@ install -m0755 contrib/xferstats.holger-preiss %{buildroot}%{_sbindir}
 install -m0644 Mandriva/proftpd.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 install -m0644 Mandriva/proftpd.xinetd %{buildroot}%{_sysconfdir}/xinetd.d/%{name}-xinetd
 install -m0755 Mandriva/proftpd.init %{buildroot}%{_initrddir}/%{name}
-install -m0644 Mandriva/proftpd.service %{buildroot}%{_sysconfdir}/avahi/services/%{name}.service
 install -m0644 Mandriva/basic.conf %{buildroot}%{_sysconfdir}/%{name}.conf
 install -m0644 Mandriva/welcome.msg %{buildroot}/var/ftp/pub/welcome.msg
 
@@ -695,6 +721,8 @@ echo "LoadModule mod_vroot.c" > %{buildroot}%{_sysconfdir}/%{name}.d/36_mod_vroo
 echo "LoadModule mod_sftp.c" > %{buildroot}%{_sysconfdir}/%{name}.d/37_mod_sftp.conf
 echo "LoadModule mod_sftp_pam.c" > %{buildroot}%{_sysconfdir}/%{name}.d/38_mod_sftp_pam.conf
 echo "LoadModule mod_sftp_sql.c" > %{buildroot}%{_sysconfdir}/%{name}.d/39_mod_sftp_sql.conf
+echo "LoadModule mod_memcache.c" > %{buildroot}%{_sysconfdir}/%{name}.d/40_mod_memcache.conf
+echo "LoadModule mod_tls_memcache.c" > %{buildroot}%{_sysconfdir}/%{name}.d/41_mod_tls_memcache.conf
 
 cat > %{buildroot}%{_sysconfdir}/%{name}.d/99_mod_ifsession.conf << EOF
 # keep this module the last one
@@ -749,6 +777,8 @@ list of the modules that are compiled as DSO's:
  o mod_sftp                <- NEW
  o mod_sftp_pam            <- NEW
  o mod_sftp_sql            <- NEW
+ o mod_memcache            <- NEW
+ o mod_tls_memcache        <- NEW
 
 anonymous access configuration
 ------------------------------
@@ -1010,6 +1040,14 @@ if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
+%post mod_tls_memcache
+service proftpd condrestart > /dev/null 2>/dev/null || :
+
+%preun mod_tls_memcache
+if [ "$1" = 0 ]; then
+    service proftpd condrestart > /dev/null 2>/dev/null || :
+fi
+
 %post mod_wrap_file
 service proftpd condrestart > /dev/null 2>/dev/null || :
 
@@ -1074,19 +1112,15 @@ if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%triggerpostun -- proftpd-anonymous
-# this package doesn't exist anymore, but its configuration file may
-# be used in current proftpd configuration
-if [ -e /etc/proftpd-anonymous.conf.rpmsave ]; then
-    mv -f /etc/proftpd-anonymous.conf.rpmsave /etc/proftpd-anonymous.conf
-    echo "warning: /etc/proftpd-anonymous.conf.rpmsave restored as /etc/proftpd-anonymous.conf"
+%post mod_memcache
+service proftpd condrestart > /dev/null 2>/dev/null || :
+
+%preun mod_memcache
+if [ "$1" = 0 ]; then
+    service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
 
-%clean
-rm -rf %{buildroot}
-
 %files -f %{name}.lang
-%defattr(-,root,root)
 %doc README* INSTALL NEWS CREDITS COPYING doc/* README.urpmi
 %doc sample-configurations/*
 %dir %{_sysconfdir}/proftpd.d
@@ -1095,7 +1129,6 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 %config(noreplace) %{_sysconfdir}/xinetd.d/%{name}-xinetd
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
-%config(noreplace) %{_sysconfdir}/avahi/services/%{name}.service
 %{_initrddir}/%{name}
 %{_sbindir}/%{name}
 %{_sbindir}/ftpscrub
@@ -1103,8 +1136,11 @@ rm -rf %{buildroot}
 %{_sbindir}/in.ftpd
 %{_sbindir}/in.%{name}
 %{_sbindir}/xferstats.holger-preiss
+%{_bindir}/ftpasswd
 %{_bindir}/ftpcount
 %{_bindir}/ftpdctl
+%{_bindir}/ftpmail
+%{_bindir}/ftpquota
 %{_bindir}/ftptop
 %{_bindir}/ftpwho
 %{_bindir}/prxs
@@ -1117,194 +1153,166 @@ rm -rf %{buildroot}
 %{_mandir}/man*/*
 
 %files devel
-%defattr(-,root,root)
 %doc ChangeLog
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/*.h
 %{_libdir}/pkgconfig/*.pc
 
 %files mod_ctrls_admin
-%defattr(-,root,root)
 %doc doc/contrib/mod_ctrls_admin.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/10_mod_ctrls_admin.conf
 %{_libdir}/%{name}/mod_ctrls_admin.so
 
 %files mod_ifsession
-%defattr(-,root,root)
 %doc doc/contrib/mod_ifsession.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/99_mod_ifsession.conf
 %{_libdir}/%{name}/mod_ifsession.so
 
 %files mod_ldap
-%defattr(-,root,root)
 %config(noreplace) %{_sysconfdir}/%{name}.d/13_mod_ldap.conf
 %{_libdir}/%{name}/mod_ldap.so
 
 %files mod_quotatab
-%defattr(-,root,root)
 %doc doc/contrib/mod_quotatab.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/16_mod_quotatab.conf
 %{_libdir}/%{name}/mod_quotatab.so
 
 %files mod_quotatab_file
-%defattr(-,root,root)
 %doc doc/contrib/mod_quotatab_file.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/17_mod_quotatab_file.conf
 %{_libdir}/%{name}/mod_quotatab_file.so
 
 %files mod_quotatab_ldap
-%defattr(-,root,root)
 %doc doc/contrib/mod_quotatab_ldap.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/18_mod_quotatab_ldap.conf
 %{_libdir}/%{name}/mod_quotatab_ldap.so
 
 %files mod_quotatab_sql
-%defattr(-,root,root)
 %doc doc/contrib/mod_quotatab_sql.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/19_mod_quotatab_sql.conf
 %{_libdir}/%{name}/mod_quotatab_sql.so
 
 %files mod_quotatab_radius
-%defattr(-,root,root)
 %doc doc/contrib/mod_quotatab_radius.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/20_mod_quotatab_radius.conf
 %{_libdir}/%{name}/mod_quotatab_radius.so
 
 %files mod_radius
-%defattr(-,root,root)
 %doc doc/contrib/mod_radius.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/20_mod_radius.conf
 %{_libdir}/%{name}/mod_radius.so
 
 %files mod_ratio
-%defattr(-,root,root)
 %doc contrib/README.ratio
 %config(noreplace) %{_sysconfdir}/%{name}.d/25_mod_ratio.conf
 %{_libdir}/%{name}/mod_ratio.so
 
 %files mod_rewrite
-%defattr(-,root,root)
 %doc doc/contrib/mod_rewrite.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/24_mod_rewrite.conf
 %{_libdir}/%{name}/mod_rewrite.so
 
 %files mod_site_misc
-%defattr(-,root,root)
 %doc doc/contrib/mod_site_misc.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/33_mod_site_misc.conf
 %{_libdir}/%{name}/mod_site_misc.so
 
 %files mod_sql
-%defattr(-,root,root)
 %doc doc/contrib/mod_sql.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/12_mod_sql.conf
 %{_libdir}/%{name}/mod_sql.so
 
 %files mod_sql_mysql
-%defattr(-,root,root)
 %config(noreplace) %{_sysconfdir}/%{name}.d/14_mod_sql_mysql.conf
 %{_libdir}/%{name}/mod_sql_mysql.so
 
 %files mod_sql_postgres
-%defattr(-,root,root)
 %config(noreplace) %{_sysconfdir}/%{name}.d/15_mod_sql_postgres.conf
 %{_libdir}/%{name}/mod_sql_postgres.so
 
 %files mod_sql_sqlite
-%defattr(-,root,root)
 %config(noreplace) %{_sysconfdir}/%{name}.d/16_mod_sql_sqlite.conf
 %{_libdir}/%{name}/mod_sql_sqlite.so
 
 %files mod_sql_passwd
-%defattr(-,root,root)
 %config(noreplace) %{_sysconfdir}/%{name}.d/17_mod_sql_passwd.conf
 %{_libdir}/%{name}/mod_sql_passwd.so
 
 %files mod_tls
-%defattr(-,root,root)
 %doc doc/contrib/mod_tls.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/11_mod_tls.conf
 %{_libdir}/%{name}/mod_tls.so
 
 %files mod_tls_shmcache
-%defattr(-,root,root)
 %doc doc/contrib/mod_tls_shmcache.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/12_mod_tls_shmcache.conf
 %{_libdir}/%{name}/mod_tls_shmcache.so
 
+%files mod_tls_memcache
+%doc doc/contrib/mod_tls_memcache.html
+%config(noreplace) %{_sysconfdir}/%{name}.d/41_mod_tls_memcache.conf
+%{_libdir}/%{name}/mod_tls_memcache.so
+
 #%files mod_facl
-#%defattr(-,root,root)
 #%config(noreplace) %{_sysconfdir}/%{name}.d/30_mod_facl.conf
 #%{_libdir}/%{name}/mod_facl.so
 
 %files mod_autohost
-%defattr(-,root,root)
 %doc mod_autohost/mod_autohost.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/27_mod_autohost.conf
 %{_libdir}/%{name}/mod_autohost.so
 
 %files mod_case
-%defattr(-,root,root)
 %doc mod_case/mod_case.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/28_mod_case.conf
 %{_libdir}/%{name}/mod_case.so
 
 %files mod_gss
-%defattr(-,root,root)
 %doc mod_gss-*/COPYING mod_gss-*/mod_gss.html mod_gss-*/README.mod_gss mod_gss-*/rfc1509.txt mod_gss-*/rfc2228.txt
 %config(noreplace) %{_sysconfdir}/%{name}.d/26_mod_gss.conf
 %{_libdir}/%{name}/mod_gss.so
 
 %files mod_load
-%defattr(-,root,root)
 %doc doc/contrib/mod_load.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/31_mod_load.conf
 %{_libdir}/%{name}/mod_load.so
 
 %files mod_shaper
-%defattr(-,root,root)
 %doc doc/contrib/mod_shaper.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/32_mod_shaper.conf
 %{_libdir}/%{name}/mod_shaper.so
 
 %files mod_time
-%defattr(-,root,root)
 %doc mod_time/README mod_time/mod_time.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/34_mod_time.conf
 %{_libdir}/%{name}/mod_time.so
 
 %files mod_wrap
-%defattr(-,root,root)
 %doc doc/contrib/mod_wrap2.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/21_mod_wrap2.conf
 %{_libdir}/%{name}/mod_wrap2.so
 
 %files mod_wrap_file
-%defattr(-,root,root)
 %doc doc/contrib/mod_wrap2_file.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/22_mod_wrap2_file.conf
 %{_libdir}/%{name}/mod_wrap2_file.so
 
 %files mod_wrap_sql
-%defattr(-,root,root)
 %doc doc/contrib/mod_wrap2_sql.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/23_mod_wrap2_sql.conf
 %{_libdir}/%{name}/mod_wrap2_sql.so
 
 %files mod_ban
-%defattr(-,root,root)
 %doc doc/contrib/mod_ban.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/35_mod_ban.conf
 %{_libdir}/%{name}/mod_ban.so
 
 %files mod_vroot
-%defattr(-,root,root)
 %doc mod_vroot/mod_vroot.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/36_mod_vroot.conf
 %{_libdir}/%{name}/mod_vroot.so
 
 %files mod_sftp
-%defattr(-,root,root)
 %doc doc/contrib/mod_sftp.html
 %config(noreplace) %{_sysconfdir}/blacklist.dat
 %config(noreplace) %{_sysconfdir}/dhparams.pem
@@ -1312,13 +1320,16 @@ rm -rf %{buildroot}
 %{_libdir}/%{name}/mod_sftp.so
 
 %files mod_sftp_pam
-%defattr(-,root,root)
 %doc doc/contrib/mod_sftp_pam.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/38_mod_sftp_pam.conf
 %{_libdir}/%{name}/mod_sftp_pam.so
 
 %files mod_sftp_sql
-%defattr(-,root,root)
 %doc doc/contrib/mod_sftp_sql.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/39_mod_sftp_sql.conf
 %{_libdir}/%{name}/mod_sftp_sql.so
+
+%files mod_memcache
+%doc doc/modules/mod_memcache.html
+%config(noreplace) %{_sysconfdir}/%{name}.d/40_mod_memcache.conf
+%{_libdir}/%{name}/mod_memcache.so
