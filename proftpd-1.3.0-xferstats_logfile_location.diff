@@ -1,0 +1,11 @@
+--- contrib/xferstats.holger-preiss	2002-05-30 18:22:46.000000000 +0200
++++ contrib/xferstats.holger-preiss.oden	2006-08-29 11:18:10.000000000 +0200
+@@ -49,7 +49,7 @@
+ # $mydom2 = "org";
+ 
+ # edit the next line to customize for your default log file
+-$usage_file = "/var/log/xferlog";
++$usage_file = "/var/log/proftpd/proftpd.log";
+ 
+ # Edit the following lines for default report settings.
+ # Entries defined here will be over-ridden by the command line.

@@ -1,0 +1,11 @@
+--- tests/Makefile.in	2011-10-31 19:39:33.000000000 +0100
++++ tests/Makefile.in.oden	2011-12-06 12:56:48.968825167 +0100
+@@ -78,7 +78,7 @@
+ 	./$@
+ 
+ running-tests:
+-	perl tests.pl
++	perl tests.pl --verbose
+ 
+ check: dummy api-tests$(EXEEXT) running-tests
+ 

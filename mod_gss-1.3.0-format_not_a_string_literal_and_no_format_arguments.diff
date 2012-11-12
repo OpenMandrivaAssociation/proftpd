@@ -1,0 +1,38 @@
+--- mod_gss-1.3.3/mod_gss.c.in	2009-08-07 15:12:52.000000000 +0200
++++ mod_gss-1.3.3/mod_gss.c.in.oden	2010-11-02 09:40:39.747250142 +0100
+@@ -628,7 +628,7 @@ static int gss_log(const char *fmt, ...)
+         vsnprintf(buf, sizeof(buf), fmt, msg);
+         va_end(msg);
+         buf[sizeof(buf)-1] = '\0';
+-        pr_log_pri(PR_LOG_NOTICE,buf);
++        pr_log_pri(PR_LOG_NOTICE, "%s", buf);
+ 	return 0;
+     }
+ 	  
+@@ -653,7 +653,7 @@ static int gss_log(const char *fmt, ...)
+     buf[strlen(buf)] = '\n';
+     buf[sizeof(buf)-1] = '\0';
+ 
+-    pr_log_pri(PR_LOG_NOTICE,mbuf);
++    pr_log_pri(PR_LOG_NOTICE, "%s", mbuf);
+     if (write(gss_logfd, buf, strlen(buf)) < 0)
+ 	return -1;
+ 
+@@ -1087,7 +1087,7 @@ MODRET gss_ccc(cmd_rec *cmd) {
+         return HANDLED(cmd);
+     }
+ 
+-    pr_response_add_err(R_534, mesg);
++    pr_response_add_err(R_534, "%s", mesg);
+     gss_log("GSSAPI %s", mesg);
+     return ERROR(cmd);
+ 
+@@ -1118,7 +1118,7 @@ MODRET gss_fwccc(cmd_rec *cmd) {
+         return HANDLED(cmd);
+     }
+ 
+-    pr_response_add_err(R_534, mesg);
++    pr_response_add_err(R_534, "%s", mesg);
+     gss_log("GSSAPI %s", mesg);
+     return ERROR(cmd);
+ 

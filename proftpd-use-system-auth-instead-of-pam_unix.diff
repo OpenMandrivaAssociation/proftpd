@@ -1,0 +1,18 @@
+--- contrib/dist/rpm/ftp.pamd	2007-10-11 18:59:58.000000000 +0200
++++ contrib/dist/rpm/ftp.pamd.oden	2007-10-11 19:02:19.000000000 +0200
+@@ -1,6 +1,6 @@
+ #%PAM-1.0
+ auth       required	pam_listfile.so item=user sense=deny file=/etc/ftpusers onerr=succeed
+-auth       required	pam_unix.so shadow nullok
++auth       include      system-auth
+ 
+ # If this is enabled, anonymous logins will fail because the 'ftp' user does
+ # not have a "valid" shell, as listed in /etc/shells.
+@@ -11,5 +11,5 @@
+ #
+ #auth       required	pam_shells.so
+ 
+-account    required	pam_unix.so
+-session    required	pam_unix.so
++account    include     system-auth
++session    include     system-auth
