@@ -11,7 +11,7 @@
 Summary:	Professional FTP Server
 Name:		proftpd
 Version:	1.3.4a
-Release:	2
+Release:	3
 License:	GPL
 Group:		System/Servers
 URL:		http://proftpd.org/
@@ -62,7 +62,7 @@ BuildRequires:	openldap-devel
 BuildRequires:	openssl-devel
 BuildRequires:	pam-devel
 BuildRequires:	pkgconfig
-BuildRequires:	postgresql-libs-devel
+BuildRequires:	postgresql-devel
 BuildRequires:	sasl-plug-gssapi
 BuildRequires:	sqlite3-devel
 BuildRequires:	tcp_wrappers-devel
