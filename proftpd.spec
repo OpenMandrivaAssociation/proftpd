@@ -12,9 +12,9 @@ Summary:	Professional FTP Server
 Name:		proftpd
 Version:	1.3.4a
 Release:	3
-License:	GPL
+License:	GPLv2
 Group:		System/Servers
-URL:		http://proftpd.org/
+Url:		http://proftpd.org/
 Source0:	ftp://ftp.proftpd.org/distrib/source/%{name}-%{version}.tar.gz
 Source1:	proftpd.logrotate
 Source2: 	proftpd.xinetd
@@ -45,31 +45,27 @@ Patch41:	mod_time-format_not_a_string_literal_and_no_format_arguments.diff
 Patch42:	proftpd-1.3.3c-no_-ldes425.diff
 Requires:	pam >= 0.59
 Requires:	setup >= 2.2.0-21mdk
-Requires(post): rpm-helper
-Requires(postun): rpm-helper
-Requires(preun): rpm-helper
-Requires(pre): rpm-helper
+Requires(post,postun,preun,pre): rpm-helper
+BuildRequires:	libtool
+BuildRequires:	sasl-plug-gssapi
 BuildRequires:	cap-devel
 BuildRequires:	gettext-devel
 BuildRequires:	acl-devel
 BuildRequires:	attr-devel
 BuildRequires:	krb5-devel
-BuildRequires:	libtool
 BuildRequires:	libtool-devel
-BuildRequires:	mysql-devel
-BuildRequires:	ncurses-devel
-BuildRequires:	openldap-devel
-BuildRequires:	openssl-devel
-BuildRequires:	pam-devel
-BuildRequires:	pkgconfig
-BuildRequires:	postgresql-devel
-BuildRequires:	sasl-plug-gssapi
-BuildRequires:	sqlite3-devel
-BuildRequires:	tcp_wrappers-devel
-BuildRequires:	zlib-devel
 BuildRequires:	memcached-devel >= 0.41
-BuildRequires:	pcre-devel
-BuildRequires:	libmemcached-devel
+BuildRequires:	mysql-devel
+BuildRequires:	openldap-devel
+BuildRequires:	pam-devel
+BuildRequires:	postgresql-devel
+BuildRequires:	tcp_wrappers-devel
+BuildRequires:	pkgconfig(libmemcached)
+BuildRequires:	pkgconfig(libpcre)
+BuildRequires:	pkgconfig(ncurses)
+BuildRequires:	pkgconfig(openssl)
+BuildRequires:	pkgconfig(sqlite3)
+BuildRequires:	pkgconfig(zlib)
 Provides:	ftpserver
 Conflicts:	wu-ftpd
 Conflicts:	pure-ftpd
@@ -98,8 +94,7 @@ This package contains the development headers for ProFTPD
 %package	mod_ctrls_admin
 Summary:	Module implementing admin control handlers
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_ctrls_admin
@@ -108,8 +103,7 @@ This module implements administrative control actions for the ftpdctl program.
 %package	mod_ifsession
 Summary:	Module supporting conditional per-user/group/class configuration contexts
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_ifsession
@@ -118,8 +112,7 @@ Module supporting conditional per-user/group/class configuration contexts
 %package	mod_ldap
 Summary:	LDAP password lookup module for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_ldap
@@ -128,8 +121,7 @@ LDAP password lookup module for ProFTPD
 %package	mod_quotatab
 Summary:	Module for managing FTP byte/file quotas via centralized tables
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 Requires:	%{name}-mod_quotatab_driver = %{version}-%{release}
 
@@ -139,8 +131,7 @@ Module for managing FTP byte/file quotas via centralized tables
 %package	mod_quotatab_file
 Summary:	Sub-module for managing quota data via file-based tables
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name}-mod_quotatab = %{version}-%{release}
 Provides:	%{name}-mod_quotatab_driver = %{version}-%{release}
 
@@ -150,8 +141,7 @@ Sub-module for managing quota data via file-based tables
 %package	mod_quotatab_ldap
 Summary:	Sub-module for obtaining quota information from an LDAP directory
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name}-mod_quotatab = %{version}-%{release}
 Provides:	%{name}-mod_quotatab_driver = %{version}-%{release}
 
@@ -161,8 +151,7 @@ Sub-module for obtaining quota information from an LDAP directory
 %package	mod_quotatab_sql
 Summary:	Sub-module for managing quota data via SQL-based tables
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name}-mod_quotatab = %{version}-%{release}
 Provides:	%{name}-mod_quotatab_driver = %{version}-%{release}
 
@@ -172,8 +161,7 @@ Sub-module for managing quota data via SQL-based tables
 %package	mod_quotatab_radius
 Summary:	Sub-module for managing quota data via radius
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name}-mod_quotatab = %{version}-%{release}
 Provides:	%{name}-mod_quotatab_driver = %{version}-%{release}
 
@@ -183,8 +171,7 @@ Sub-module for managing quota data via radius
 %package	mod_radius
 Summary:	Module for RADIUS authentication and accounting
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_radius
@@ -193,8 +180,7 @@ Module for RADIUS authentication and accounting
 %package	mod_ratio
 Summary:	Support upload/download ratios
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_ratio
@@ -203,8 +189,7 @@ Support upload/download ratios
 %package	mod_rewrite
 Summary:	Module for rewriting FTP commands
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_rewrite
@@ -213,8 +198,7 @@ Module for rewriting FTP commands
 %package	mod_site_misc
 Summary:	Module implementing miscellaneous SITE commands
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_site_misc
@@ -223,8 +207,7 @@ Module implementing miscellaneous SITE commands
 %package	mod_sql
 Summary:	SQL frontend
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 Requires:	%{name}-mod_sql_driver = %{version}-%{release}
 
@@ -234,8 +217,7 @@ SQL frontend
 %package	mod_sql_mysql
 Summary:	Support for connecting to MySQL databases
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name}-mod_sql = %{version}-%{release}
 Provides:	%{name}-mod_sql_driver = %{version}-%{release}
 
@@ -245,8 +227,7 @@ Support for connecting to MySQL databases
 %package	mod_sql_postgres
 Summary:	Support for connecting to Postgres databases
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name}-mod_sql = %{version}-%{release}
 Provides:	%{name}-mod_sql_driver = %{version}-%{release}
 
@@ -256,8 +237,7 @@ Support for connecting to Postgres databases
 %package	mod_sql_sqlite
 Summary:	Support for connecting to SQLite3 databases
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name}-mod_sql = %{version}-%{release}
 Provides:	%{name}-mod_sql_driver = %{version}-%{release}
 
@@ -267,8 +247,7 @@ Support for connecting to SQLite3 databases
 %package	mod_sql_passwd
 Summary:	Various SQL password handlers
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name}-mod_sql = %{version}-%{release}
 Provides:	%{name}-mod_sql_driver = %{version}-%{release}
 
@@ -278,8 +257,7 @@ Various SQL password handlers
 %package	mod_tls
 Summary:	An RFC2228 SSL/TLS module for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_tls
@@ -288,8 +266,7 @@ An RFC2228 SSL/TLS module for ProFTPD
 %package	mod_tls_shmcache
 Summary:	A module which provides a shared SSL session cache using SysV shared memory
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 Requires:	%{name}-mod_tls = %{version}-%{release}
 
@@ -301,8 +278,7 @@ directive.
 %package	mod_tls_memcache
 Summary:	A module which provides a shared SSL session cache using memcached servers
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 Requires:	%{name}-mod_tls = %{version}-%{release}
 Suggests:	memcached
@@ -322,8 +298,7 @@ cache for use by the mod_tls module's TLSSessionCache directive.
 %package	mod_autohost
 Summary:	An autohost module for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_autohost
@@ -348,8 +323,7 @@ only reads and uses the needed configuration.
 %package	mod_case
 Summary:	Makes ProFTPD case insensitive
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_case
@@ -365,8 +339,7 @@ directory again, this time looking for case-insensitive matches.
 %package	mod_gss
 Summary:	A Kerberos 5 GSS module for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_gss
@@ -375,8 +348,7 @@ A Kerberos 5 GSS module for ProFTPD
 %package	mod_load
 Summary:	A module that determines average load for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_load
@@ -389,8 +361,7 @@ please contact the author as soon as possible.
 %package	mod_shaper
 Summary:	A shaping module for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_shaper
@@ -404,8 +375,7 @@ commands.
 %package	mod_time
 Summary:	Limits acces based on the time of day and/or the day of the week
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_time
@@ -416,8 +386,7 @@ this module follows the directive explanations.
 %package	mod_wrap
 Summary:	Provides tcpwrapper-like access control rules for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 Requires:	%{name}-mod_wrap_driver = %{version}-%{release}
 Requires:	tcp_wrappers
@@ -437,8 +406,7 @@ table information in various formats:
 %package	mod_wrap_file
 Summary:	A file-specific driver for the mod_wrap module for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 Provides:	%{name}-mod_wrap_driver = %{version}-%{release}
 
@@ -449,8 +417,7 @@ access control information in files.
 %package	mod_wrap_sql
 Summary:	A SQL database driver for the mod_wrap module for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 Provides:	%{name}-mod_wrap_driver = %{version}-%{release}
 
@@ -461,8 +428,7 @@ access control information in SQL tables.
 %package	mod_ban
 Summary:	Adds dynamic "ban" lists to ProFTPD
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_ban
@@ -475,8 +441,7 @@ triggered based on configurable criteria.
 %package	mod_vroot
 Summary:	Adds virtual chroot capability to ProFTPD
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_vroot
@@ -487,8 +452,7 @@ by using ProFTPD's FS API, available as of 1.2.8rc1.
 %package	mod_sftp
 Summary:	Implements the SSH2 protocol and its SFTP subsystem for ProFTPD
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_sftp
@@ -509,8 +473,7 @@ secure file transfer over an SSH2 connection. The mod_sftp module supports:
 %package	mod_sftp_pam
 Summary:	A module which provides an SSH2 "keyboard-interactive" driver using PAM
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 Requires:	%{name}-mod_sftp >= %{version}-%{release}
 
@@ -521,8 +484,7 @@ Authentication" RFC (RFC4256).
 %package	mod_sftp_sql
 Summary:	SQL backend module for retrieving authorized keys
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 Requires:	%{name}-mod_sftp >= %{version}-%{release}
 Requires:	%{name}-mod_sql >= %{version}-%{release}
@@ -536,8 +498,7 @@ authorized SSH keys to be stored in SQL tables.
 %package	mod_memcache
 Summary:	A module for managing memcache data
 Group:		System/Servers
-Requires(post): %{name} >= %{version}-%{release}
-Requires(preun): %{name} >= %{version}-%{release}
+Requires(post,preun):	%{name} >= %{version}-%{release}
 Requires:	%{name} >= %{version}-%{release}
 
 %description	mod_memcache
@@ -545,8 +506,7 @@ The mod_memcache module enables ProFTPD support for caching data in memcached
 servers, using the libmemcached client library.
 
 %prep
-
-%setup -q -n %{name}-%{version} -a100 -a102 -a103 -a105 -a108
+%setup -q -a100 -a102 -a103 -a105 -a108
 
 %patch0 -p0 -b .logfile_location
 %patch2 -p0 -b .pam
@@ -578,9 +538,7 @@ perl -pi -e "s|\<mysql\.h\>|\<mysql\/mysql\.h\>|g" contrib/mod_sql_mysql.c
 #perl -pi -e "s|\<libpq-fe\.h\>|\<pgsql\/libpq-fe\.h\>|g" contrib/mod_sql_postgres.c
 
 %build
-
 %serverbuild
-
 export CFLAGS="$CFLAGS -DLDAP_DEPRECATED -DUSE_LDAP_TLS -DHAVE_OPENSSL"
 export LIBS="-L%{_libdir} -lattr"
 
@@ -619,21 +577,21 @@ done
 #aclocal; autoconf
 
 %configure2_5x \
-    --libexecdir=%{_libdir}/%{name} \
-    --enable-auth-pam \
-    --enable-cap \
-    --disable-facl \
-    --enable-dso \
-    --enable-nls \
-    --enable-openssl \
-    --with-lastlog=/var/log/lastlog \
-    --enable-ipv6 \
-    --enable-shadow \
-    --enable-ctrls \
-    --with-shared="mod_ratio:mod_tls:mod_tls_shmcache:mod_radius:mod_ldap:mod_sql:mod_sql_mysql:mod_sql_postgres:mod_sql_sqlite:mod_sql_passwd:mod_rewrite:mod_gss:mod_load:mod_ctrls_admin:mod_quotatab:mod_quotatab_file:mod_quotatab_ldap:mod_quotatab_sql:mod_quotatab_radius:mod_site_misc:mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_autohost:mod_case:mod_shaper:mod_ban:mod_vroot:mod_sftp:mod_sftp_pam:mod_sftp_sql:mod_time:mod_ifsession:mod_memcache:mod_tls_memcache" \
-    --with-modules="mod_readme:mod_auth_pam" \
-    --disable-strip \
-    --enable-pcre
+	--libexecdir=%{_libdir}/%{name} \
+	--enable-auth-pam \
+	--enable-cap \
+	--disable-facl \
+	--enable-dso \
+	--enable-nls \
+	--enable-openssl \
+	--with-lastlog=/var/log/lastlog \
+	--enable-ipv6 \
+	--enable-shadow \
+	--enable-ctrls \
+	--with-shared="mod_ratio:mod_tls:mod_tls_shmcache:mod_radius:mod_ldap:mod_sql:mod_sql_mysql:mod_sql_postgres:mod_sql_sqlite:mod_sql_passwd:mod_rewrite:mod_gss:mod_load:mod_ctrls_admin:mod_quotatab:mod_quotatab_file:mod_quotatab_ldap:mod_quotatab_sql:mod_quotatab_radius:mod_site_misc:mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_autohost:mod_case:mod_shaper:mod_ban:mod_vroot:mod_sftp:mod_sftp_pam:mod_sftp_sql:mod_time:mod_ifsession:mod_memcache:mod_tls_memcache" \
+	--with-modules="mod_readme:mod_auth_pam" \
+	--disable-strip \
+	--enable-pcre
 
 #    --enable-tests
 
@@ -643,12 +601,10 @@ echo "#define HAVE_LINUX_CAPABILITY_H 1" >> config.h
 
 %make
 
-#%%check
+%check
 #make check
 
 %install
-rm -rf %{buildroot}
-
 install -d %{buildroot}%{_initrddir}
 install -d %{buildroot}%{_libdir}/%{name}
 install -d %{buildroot}%{_sysconfdir}/logrotate.d
@@ -660,10 +616,10 @@ install -d %{buildroot}/var/log/%{name}
 install -d %{buildroot}/var/run/%{name}
 
 %makeinstall \
-    rundir=%{buildroot}/var/run/%{name} \
-    LIBEXECDIR=%{buildroot}%{_libdir}/%{name} \
-    SHARED_MODULE_DIRS="" \
-    pkgconfigdir=%{buildroot}%{_libdir}/pkgconfig
+	rundir=%{buildroot}/var/run/%{name} \
+	LIBEXECDIR=%{buildroot}%{_libdir}/%{name} \
+	SHARED_MODULE_DIRS="" \
+	pkgconfigdir=%{buildroot}%{_libdir}/pkgconfig
 
 # fix borked pkgconfig file
 perl -pi -e "s|^prefix.*|prefix=%{_prefix}|g" %{buildroot}%{_libdir}/pkgconfig/*.pc
@@ -741,7 +697,7 @@ how modules are loaded and the configuration of apache-2.x. Because of this you
 may have to manually merge your old configuration into the new
 /etc/proftpd.conf file.  This is especially true if you are using LDAP, because
 then the mod_ldap.so proftpd module will not be automatically loaded. Here is a
-list of the modules that are compiled as DSO's:
+list of the modules that are compiled as DSOs:
 
  o mod_autohost.so         <- NEW
  o mod_ban.so              <- NEW
@@ -1333,418 +1289,4 @@ fi
 %doc doc/modules/mod_memcache.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/40_mod_memcache.conf
 %{_libdir}/%{name}/mod_memcache.so
-
-
-%changelog
-* Tue Feb 07 2012 Oden Eriksson <oeriksson@mandriva.com> 1.3.4a-2
-+ Revision: 771528
-- rebuilt for new pcre
-
-* Tue Dec 06 2011 Oden Eriksson <oeriksson@mandriva.com> 1.3.4a-1
-+ Revision: 738291
-- more cleanups
-- 1.3.4a
-- rediffed some patches
-- fix the mod_autohost build
-- added the new mod_memcache and mod_tls_memcache sub packages
-- added pcre support
-- drop the avahi crap
-- various fixes
-
-* Mon May 30 2011 Oden Eriksson <oeriksson@mandriva.com> 1.3.3e-1
-+ Revision: 681819
-- 1.3.3e
-- added some more modules
-- cleanup the spec file a bit
-
-* Thu May 05 2011 Oden Eriksson <oeriksson@mandriva.com> 1.3.3d-4
-+ Revision: 667880
-- mass rebuild
-
-* Fri Mar 18 2011 Oden Eriksson <oeriksson@mandriva.com> 1.3.3d-3
-+ Revision: 646317
-- use the bundled mod-shaper which is newer
-- mod-vroot-0.9.2
-- sync with MDVSA-2011:047
-
-* Thu Mar 17 2011 Oden Eriksson <oeriksson@mandriva.com> 1.3.3d-2
-+ Revision: 645754
-- relink against libmysqlclient.so.18
-
-* Mon Jan 17 2011 Oden Eriksson <oeriksson@mandriva.com> 1.3.3d-1
-+ Revision: 631159
-- 1.3.3d
-
-* Sat Jan 01 2011 Oden Eriksson <oeriksson@mandriva.com> 1.3.3c-4mdv2011.0
-+ Revision: 627005
-- rebuilt against mysql-5.5.8 libs, again
-
-* Mon Dec 27 2010 Oden Eriksson <oeriksson@mandriva.com> 1.3.3c-3mdv2011.0
-+ Revision: 625426
-- rebuilt against mysql-5.5.8 libs
-- disable the tests for now
-- more deps (perl-Error)
-- use the test suite
-
-* Tue Nov 02 2010 Oden Eriksson <oeriksson@mandriva.com> 1.3.3c-1mdv2011.0
-+ Revision: 591917
-- 1.3.3c
-- mod_gss-1.3.3
-- mod-case-0.4
-
-* Mon Apr 05 2010 Funda Wang <fwang@mandriva.org> 1.3.3-3mdv2010.1
-+ Revision: 531741
-- add fedora patch to fix rpm debug error on canonicalization unexpectedly shrank
-- rebuild for new openssl
-
-* Fri Feb 26 2010 Oden Eriksson <oeriksson@mandriva.com> 1.3.3-2mdv2010.1
-+ Revision: 511621
-- rebuilt against openssl-0.9.8m
-
-* Thu Feb 25 2010 Oden Eriksson <oeriksson@mandriva.com> 1.3.3-1mdv2010.1
-+ Revision: 511134
-- 1.3.3
-- drop code and patches added upstream
-- rediffed one patch
-- mod-autohost-0.3
-
-* Wed Feb 17 2010 Oden Eriksson <oeriksson@mandriva.com> 1.3.2c-2mdv2010.1
-+ Revision: 507038
-- rebuild
-
-* Sat Dec 19 2009 Oden Eriksson <oeriksson@mandriva.com> 1.3.2c-1mdv2010.1
-+ Revision: 480185
-- 1.3.2c
-
-* Mon Nov 30 2009 Oden Eriksson <oeriksson@mandriva.com> 1.3.2b-2mdv2010.1
-+ Revision: 471764
-- P9: security fix for CVE-2009-3736
-
-* Fri Oct 23 2009 Oden Eriksson <oeriksson@mandriva.com> 1.3.2b-1mdv2010.0
-+ Revision: 459054
-- 1.3.2b
-
-* Sun Aug 09 2009 Oden Eriksson <oeriksson@mandriva.com> 1.3.2a-1mdv2010.0
-+ Revision: 412953
-- 1.3.2a
-- upgraded some modules
-- nuked and adjusted some patches
-
-* Tue Mar 03 2009 Oden Eriksson <oeriksson@mandriva.com> 1.3.2-4mdv2009.1
-+ Revision: 348010
-- does not work with libtool-2.2.6, so skip regeneration of the autopoo stuff (fixes #47959)
-- drop P3, (FORTIFY_SOURCE fix) it was fixed in 1.3.1
-- nuke P5 as it was allready applied
-
-* Fri Feb 27 2009 Oden Eriksson <oeriksson@mandriva.com> 1.3.2-3mdv2009.1
-+ Revision: 345791
-- re-enable the mod_time module (P8)
-
-* Thu Feb 26 2009 Oden Eriksson <oeriksson@mandriva.com> 1.3.2-2mdv2009.1
-+ Revision: 345313
-- nuke the clamav parts
-
-* Sat Feb 14 2009 Oden Eriksson <oeriksson@mandriva.com> 1.3.2-1mdv2009.1
-+ Revision: 340318
-- fix deps
-- it compiles just fine without the proftpd_modet.patch patch
-- rediffed one more patch, duh!
-- 1.3.2
-- rediffed patches and dropped upstream implemented ones
-- fixed fugly autopoo
-- disable the build of the mod_time module, someone needs to port it
-- added the new mod_sftp module
-- updated some of the modules
-
-* Sun Jan 04 2009 Olivier Thauvin <nanardon@mandriva.org> 1.3.1-17mdv2009.1
-+ Revision: 324539
-- new mod_gss
-- new mod_gss
-
-* Wed Dec 17 2008 Oden Eriksson <oeriksson@mandriva.com> 1.3.1-16mdv2009.1
-+ Revision: 315161
-- rediffed fuzzy patches
-- drop the CVE-2007-2165 patch (P26), dupe code caught by --fuzz=0
-- fix build with -Werror=format-security (P40,P41,P42,P43)
-
-* Sat Dec 06 2008 Oden Eriksson <oeriksson@mandriva.com> 1.3.1-15mdv2009.1
-+ Revision: 311204
-- rebuilt against mysql-5.1.30 libs
-
-* Tue Sep 23 2008 Oden Eriksson <oeriksson@mandriva.com> 1.3.1-14mdv2009.0
-+ Revision: 287323
-- fix "warning: `proftpd' uses 32-bit capabilities (legacy support in use)"
-- added the mod_vroot sub package
-
-* Fri Jul 11 2008 Oden Eriksson <oeriksson@mandriva.com> 1.3.1-13mdv2009.0
-+ Revision: 233953
-- fix build
-- use _disable_ld_no_undefined because it's too ugly to fix
-
-  + Thierry Vignaud <tv@mandriva.org>
-    - rebuild
-
-* Sat Feb 16 2008 Olivier Thauvin <nanardon@mandriva.org> 1.3.1-11mdv2008.1
-+ Revision: 169341
-- workaround bs
-- workaround header conflicting type on ix86 arch
-- bump
-- resurrect a proftpd-anonymous config file
-- fix initscript
-
-  + Oden Eriksson <oeriksson@mandriva.com>
-    - rebuild
-
-  + Thierry Vignaud <tv@mandriva.org>
-    - fix description-line-too-long
-    - rebuild with fixed %%serverbuild macro
-    - rebuild
-    - do not package big ChangeLog
-
-  + Olivier Blin <blino@mandriva.org>
-    - restore BuildRoot
-
-* Mon Dec 24 2007 Oden Eriksson <oeriksson@mandriva.com> 1.3.1-6mdv2008.1
-+ Revision: 137471
-- rebuilt against openldap-2.4.7 libs
-
-  + Thierry Vignaud <tv@mandriva.org>
-    - kill re-definition of %%buildroot on Pixel's request
-
-* Fri Dec 14 2007 Oden Eriksson <oeriksson@mandriva.com> 1.3.1-5mdv2008.1
-+ Revision: 120106
-- fix #36136 (Proftpd do not start, problem with openssl)
-
-* Mon Nov 12 2007 Funda Wang <fwang@mandriva.org> 1.3.1-4mdv2008.1
-+ Revision: 108182
-- rebuild for new lzma
-
-* Tue Oct 30 2007 Oden Eriksson <oeriksson@mandriva.com> 1.3.1-3mdv2008.1
-+ Revision: 103799
-- fixes #27575
-- fix condrestart in the initscript
-- fix deps (MySQL-devel/mysql-devel)
-- mod_clamav_new 0.5
-- fix #27575
-
-* Mon Oct 29 2007 Oden Eriksson <oeriksson@mandriva.com> 1.3.1-2mdv2008.1
-+ Revision: 102986
-- rebuilt due to package loss
-
-* Thu Oct 11 2007 Oden Eriksson <oeriksson@mandriva.com> 1.3.1-1mdv2008.1
-+ Revision: 97136
-- 1.3.1
-- rediffed P2
-- dropped redundant P8
-
-* Wed Aug 15 2007 Oden Eriksson <oeriksson@mandriva.com> 1.3.1-0.rc3.0mdv2008.0
-+ Revision: 63644
-- 1.3.1rc3
-- fix #30714 (Security issue in proftpd (CVE-2007-2165))
-- fix #31118 (Syslog contains "error setting IPV6_V6ONLY: Protocol not available")
-
-* Mon Jul 16 2007 Andreas Hasenack <andreas@mandriva.com> 1.3.1-0.rc2.5mdv2008.0
-+ Revision: 52672
-- fix LDAP TLS support
-
-* Wed Jun 27 2007 Thierry Vignaud <tv@mandriva.org> 1.3.1-0.rc2.4mdv2008.0
-+ Revision: 45029
-- rebuild
-
-  + Guillaume Rousse <guillomovitch@mandriva.org>
-    - try to preserve /etc/proftpd-anonymous.conf file upon removal of proftpd-anonymous package
-      add documentation to existing README.urpmi file instead of replacing it
-
-
-* Sun Mar 11 2007 Oden Eriksson <oeriksson@mandriva.com> 1.3.1-0.rc2.3mdv2007.1
-+ Revision: 141317
-- disable mod_facl, it is not working
-
-* Wed Mar 07 2007 Oden Eriksson <oeriksson@mandriva.com> 1.3.1-0.rc2.2mdv2007.1
-+ Revision: 134874
-- third take
-- build mod_facl statically into the proftpd binary, fixes #29257
-
-  + Thierry Vignaud <tvignaud@mandriva.com>
-    - do not package huge (0.5Mb!) ChangeLog
-
-* Wed Jan 24 2007 Oden Eriksson <oeriksson@mandriva.com> 1.3.1-0.rc2.1mdv2007.1
-+ Revision: 112885
-- 1.3.1rc2
-- drop patches applied upstream (including the CVE-2006-6563 and CommandBufferSize patches)
-- disable ipv6 per default in /etc/proftpd.conf (UseIPv6 Off)
-- added some small patches to make it compile
-- mod-shaper-0.6.2 -> mod-shaper-0.6.3
-- drop mod_wrap 2.0.4 and use the bundled mod_wrap2 (2.0.5)
-- added the devel, mod_quotatab_radius, mod_ban sub packages
-- added missing post/postun stuff
-
-* Fri Jan 05 2007 Oden Eriksson <oeriksson@mandriva.com> 1.3.0a-4mdv2007.1
-+ Revision: 104615
-- sync with 1.3.0-4.4mdv2007.0 from updates
-
-* Tue Dec 19 2006 Guillaume Rousse <guillomovitch@mandriva.org> 1.3.0a-3mdv2007.1
-+ Revision: 99202
-- bump release
-- drop anonymous subpackage
-- dont ship /etc/proftpd.d content in base package (fix #27720)
-
-* Fri Dec 08 2006 Guillaume Rousse <guillomovitch@mandriva.org> 1.3.0a-2mdv2007.1
-+ Revision: 92247
-- bump release
-- cleanup file perm mess, standard perms are OK
-  don't enforce strict perms on configuration files without reason
-- drop excessive dependencies on additional modules, none is really mandatory (fix #27362)
-  rewrite init scripts:
-- use functions to avoid useless forks
-- use less useless conditionals
-- use lockfile to determine running status
-- condrestart entry
-  use init script condrestart entry from modules %%post and %%postun
-
-* Wed Nov 29 2006 Oden Eriksson <oeriksson@mandriva.com> 1.3.0a-1mdv2007.1
-+ Revision: 88685
-- 1.3.0a (CVE-2006-5815)
-
-* Thu Nov 23 2006 Oden Eriksson <oeriksson@mandriva.com> 1.3.0-10mdv2007.1
-+ Revision: 86818
-- rebuild
-- merge with the update package (1.3.0-4.2mdv2007.0):
-  - P100: security fix for mod_tls
-  - P101: security fix for CVE-2006-5815
-
-* Thu Nov 16 2006 Oden Eriksson <oeriksson@mandriva.com> 1.3.0-8mdv2007.1
-+ Revision: 84779
-- merge with my private package (P24,P25,S32)
-
-* Thu Nov 16 2006 Oden Eriksson <oeriksson@mandriva.com> 1.3.0-7mdv2007.1
-+ Revision: 84725
-- proftpd-mod-shaper-0.6.2
-
-* Fri Oct 27 2006 Oden Eriksson <oeriksson@mandriva.com> 1.3.0-6mdv2007.1
-+ Revision: 73015
-- make proftpd survive logrotation, mod_wrap and mod_gss wasn't updated for shared compilation (P22,P23), fixes #26729
-- rebuild
-- Import proftpd
-
-* Tue Sep 19 2006 Gwenole Beauchesne <gbeauchesne@mandriva.com> 1.3.0-4mdv2007.0
-- Rebuild
-
-* Thu Sep 14 2006 Oden Eriksson <oeriksson@mandriva.com> 1.3.0-3mdv2007.0
-- change the generic pam service name after looking at debian (ftp/proftpd) (P7)
-- fix upstream #2714 - mod_auth_file munges AuthUserFile, AuthGroupFile records (P10)
-- fix upstream #2721 - mod_auth_unix does not behave properly when first in AuthOrder (P11)
-- fix upstream #2769 - mod_auth_pam needs a patch to allow pam_group to work (P12)
-- fix upstream #2784 - Ability to specify MySQL Unix domain socket path (P13)
-- fix upstream #2733 - IP TOS not being set for data transfers (P14)
-- fix upstream #2482 - REST in ASCII mode returns error but leaves session in inconsistent state (P15)
-- fix upstream #2486 - IPv4-mapped IPv6 network ACLs not matched properly against IPv4 connections (P16)
-- fix upstream #2488 - Trouble with mod_tls and DSA certificates (P17)
-- fix upstream #2825 - SSL/TLS CRLs are not working properly (P18)
-- fix upstream #2807 - mod_sql processes SQLLog QUIT query twice (P19)
-- fix upstream #2809 - conf.h should be included before mysql.h in mod_sql_mysql.c (P20)
-- fix upstream #2839 - ProFTPD seems to re-read the file two times in RETR command (P21)
-- enhanced the initscript, made it quiet at startup and other fixes
-
-* Tue Sep 05 2006 Oden Eriksson <oeriksson@mandriva.com> 1.3.0-1mdv2007.0
-- rebuilt against MySQL-5.0.24a-1mdv2007.0 due to ABI changes
-
-* Wed Aug 30 2006 Oden Eriksson <oeriksson@mandriva.com> 1.3.0-1
-- 1.3.0
-- rediffed P1
-- drop upstream/obsolete patches
-- mod_ldap_version 2.8.12
-- mod_wrap_version 2.0.4
-- mod_gss_version 1.3.0
-- make most of the modules as DSO's
-- added P3,P4 for obvious fixes
-- added 2 patches from fedora extras (P5,P6)
-- added additional modules (mod_autohost,mod_case,mod_clamav,mod_shaper,mod_time)
-- added spec file stuff from ALTLinux (%%package, %%description)
-- added ideas from the debian config
-- added a README.urpmi file
-
-* Thu Jun 15 2006 Oden Eriksson <oeriksson@mandriva.com> 1.2.10-20mdv2007.0
-- rotate the correct log files (P1,S1,#23096)
-- misc spec file fixes
-
-* Fri Mar 03 2006 Michael Scherer <misc@mandriva.org> 1.2.10-19mdk
-- add avahi description file
-- fix pam stack
-
-* Tue Feb 14 2006 Olivier Blin <oblin@mandriva.com> 1.2.10-18mdk
-- remove duplicate xinetd entry (Neoclust, #21037)
-
-* Mon Jan 09 2006 Olivier Blin <oblin@mandriva.com> 1.2.10-17mdk
-- fix typo in initscript
-
-* Mon Jan 09 2006 Olivier Blin <oblin@mandriva.com> 1.2.10-16mdk
-- convert parallel init to LSB
-
-* Tue Jan 03 2006 Per Øyvind Karlsen <pkarlsen@mandriva.com> 1.2.10-15mdk
-- add parallel init support
-- fix executable-marked-as-config-file
-- fix source-or-patch-not-bzipped
-
-* Sun Nov 13 2005 Oden Eriksson <oeriksson@mandriva.com> 1.2.10-14mdk
-- added P14 to make it compile against openssl-0.9.8a
-
-* Wed Sep 07 2005 Oden Eriksson <oeriksson@mandriva.com> 1.2.10-13mdk
-- rebuild
-
-* Wed Aug 31 2005 Oden Eriksson <oeriksson@mandriva.com> 1.2.10-12mdk
-- rebuilt against new openldap-2.3.6 libs
-
-* Thu Aug 04 2005 Olivier Thauvin <nanardon@mandriva.org> 1.2.10-11mdk
-- --enable-ipv6
-- Fix PreReq
-
-* Mon Aug 01 2005 Guillaume Bedot <littletux@mandriva.org> 1.2.10-10mdk
-- Rebuild
-- Patch10: allows to build mod_radius with gcc4
-
-* Sat Apr 02 2005 Nicolas Chipaux <chipaux@mandrakesoft.com> 1.2.10-9mdk
-- Disable sendfile (break big file transfer on i586)
-
-* Thu Feb 10 2005 Oden Eriksson <oeriksson@mandrakesoft.com> 1.2.10-8mdk
-- fix dates in changelog (Christiaan Welvaart aka. hawkeye)
-
-* Thu Feb 10 2005 Oden Eriksson <oeriksson@mandrakesoft.com> 1.2.10-7mdk
-- rebuilt against new openldap libs
-- fix strange perms
-
-* Tue Feb 08 2005 Buchan Milne <bgmilne@linux-mandrake.com> 1.2.10-6mdk
-- rebuild for ldap2.2_7
-
-* Fri Feb 04 2005 Oden Eriksson <oeriksson@mandrakesoft.com> 1.2.10-5mdk
-- rebuilt against new openldap libs
-
-* Wed Nov 17 2004 Per Øyvind Karlsen <peroyvind@linux-mandrake.com> 1.2.10-4mdk
-- arg, mixed up, fix the correct buildrequires
-
-* Sat Nov 13 2004 Per Øyvind Karlsen <peroyvind@linux-mandrake.com> 1.2.10-3mdk
-- fix buildrequires
-
-* Thu Sep 30 2004 Gwenole Beauchesne <gbeauchesne@mandrakesoft.com> 1.2.10-2mdk
-- buildrequires fixes for lib64 platforms
-
-* Thu Sep 16 2004 Florin <florin@mandrakesoft.com> 1.2.10-1mdk
-- 1.2.10
-- add the gss module
-- update the ldap and biarch patches
-- remove the obsolete getfile patch
-- add the ftpdctl man page
-- update the BuildRequires
-
-* Wed Jun 23 2004 Florin <florin@mandrakesoft.com> 1.2.9-7mdk
-- add CFLAGS -DUSE_LDAPV3_TLS (B. Milne)
-
-* Wed May 12 2004 Pixel <pixel@mandrakesoft.com> 1.2.9-6mdk
-- rebuild for cooker
-
-* Wed May 12 2004 Pixel <pixel@mandrakesoft.com> 1.2.9-3.2.100mdk
-- use system-auth instead of pam_pwdb.so in pam.d/ftp (so that it adapts to winbind/ldap/...)
-
-* Sat May 01 2004 Vincent Danen <vdanen@mandrakesoft.com> 1.2.9-3.1.100mdk
-- security fix for ACLs with CIDR entries
 
