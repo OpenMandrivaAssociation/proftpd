@@ -1,6 +1,6 @@
 %define _disable_ld_no_undefined 1
 
-%define _localstatedir 	 /var/run
+%define _localstatedir /var/run
 
 %define mod_gss_version 1.3.3
 %define mod_autohost_version 0.3
@@ -11,7 +11,7 @@
 Summary:	Professional FTP Server
 Name:		proftpd
 Version:	1.3.4a
-Release:	10
+Release:	11
 License:	GPLv2
 Group:		System/Servers
 Url:		http://proftpd.org/
@@ -521,17 +521,17 @@ servers, using the libmemcached client library.
 %patch42 -p1 -b .no_-ldes425
 
 # Mandriva config
-mkdir -p Mandriva
-install -m0644 %{SOURCE1} Mandriva/proftpd.logrotate
-install -m0644 %{SOURCE2} Mandriva/proftpd.xinetd
-install -m0644 %{SOURCE3} Mandriva/proftpd.init
-install -m0644 %{SOURCE4} Mandriva/proftpd.service
-install -m0644 %{SOURCE5} Mandriva/basic.conf
-install -m0644 %{SOURCE7} Mandriva/welcome.msg
-install -m0644 %{SOURCE32} Mandriva/32_mod_shaper.conf
+mkdir -p OpenMandriva
+install -m0644 %{SOURCE1} OpenMandriva/proftpd.logrotate
+install -m0644 %{SOURCE2} OpenMandriva/proftpd.xinetd
+install -m0644 %{SOURCE3} OpenMandriva/proftpd.init
+install -m0644 %{SOURCE4} OpenMandriva/proftpd.service
+install -m0644 %{SOURCE5} OpenMandriva/basic.conf
+install -m0644 %{SOURCE7} OpenMandriva/welcome.msg
+install -m0644 %{SOURCE32} OpenMandriva/32_mod_shaper.conf
 
 # lib64 fix
-perl -pi -e "s|/usr/lib|%{_libdir}|g" Mandriva/basic.conf
+perl -pi -e "s|/usr/lib|%{_libdir}|g" OpenMandriva/basic.conf
 
 # fix includes, instead of a patch
 perl -pi -e "s|\<mysql\.h\>|\<mysql\/mysql\.h\>|g" contrib/mod_sql_mysql.c
@@ -632,11 +632,11 @@ perl -pi -e "s|/lib/|/%{_lib}/|g" %{buildroot}%{_libdir}/pkgconfig/*.pc
 install -m0644 contrib/dist/rpm/ftp.pamd %{buildroot}%{_sysconfdir}/pam.d/%{name}
 install -m0755 contrib/xferstats.holger-preiss %{buildroot}%{_sbindir}
 
-install -m0644 Mandriva/proftpd.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
-install -m0644 Mandriva/proftpd.xinetd %{buildroot}%{_sysconfdir}/xinetd.d/%{name}-xinetd
-install -m0755 Mandriva/proftpd.init %{buildroot}%{_initrddir}/%{name}
-install -m0644 Mandriva/basic.conf %{buildroot}%{_sysconfdir}/%{name}.conf
-install -m0644 Mandriva/welcome.msg %{buildroot}/var/ftp/pub/welcome.msg
+install -m0644 OpenMandriva/proftpd.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
+install -m0644 OpenMandriva/proftpd.xinetd %{buildroot}%{_sysconfdir}/xinetd.d/%{name}-xinetd
+install -m0755 OpenMandriva/proftpd.init %{buildroot}%{_initrddir}/%{name}
+install -m0644 OpenMandriva/basic.conf %{buildroot}%{_sysconfdir}/%{name}.conf
+install -m0644 OpenMandriva/welcome.msg %{buildroot}/var/ftp/pub/welcome.msg
 
 install -m0644 %{SOURCE200} %{buildroot}%{_sysconfdir}/proftpd-anonymous.conf
 
@@ -669,7 +669,7 @@ echo "LoadModule mod_autohost.c" > %{buildroot}%{_sysconfdir}/%{name}.d/27_mod_a
 echo "LoadModule mod_case.c" > %{buildroot}%{_sysconfdir}/%{name}.d/28_mod_case.conf
 #echo "LoadModule mod_facl.c" > %{buildroot}%{_sysconfdir}/%{name}.d/30_mod_facl.conf
 echo "LoadModule mod_load.c" > %{buildroot}%{_sysconfdir}/%{name}.d/31_mod_load.conf
-install -m0644 Mandriva/32_mod_shaper.conf %{buildroot}%{_sysconfdir}/%{name}.d/32_mod_shaper.conf
+install -m0644 OpenMandriva/32_mod_shaper.conf %{buildroot}%{_sysconfdir}/%{name}.d/32_mod_shaper.conf
 echo "LoadModule mod_site_misc.c" > %{buildroot}%{_sysconfdir}/%{name}.d/33_mod_site_misc.conf
 echo "LoadModule mod_time.c" > %{buildroot}%{_sysconfdir}/%{name}.d/34_mod_time.conf
 echo "LoadModule mod_ban.c" > %{buildroot}%{_sysconfdir}/%{name}.d/35_mod_ban.conf
@@ -686,7 +686,7 @@ LoadModule mod_ifsession.c
 EOF
 
 cat > README.urpmi << EOF
-Mandriva RPM specific notes
+OpenMandriva RPM specific notes
 
 modules support
 ---------------
