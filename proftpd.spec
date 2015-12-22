@@ -1,17 +1,17 @@
 %define _disable_ld_no_undefined 1
+%define _disable_lto 1
 
 %define _localstatedir /var/run
 
 %define mod_gss_version 1.3.3
-%define mod_autohost_version 0.3
-%define mod_case_version 0.4
-%define mod_time_version 2.2.1
+%define mod_autohost_version 0.4
+%define mod_case_version 0.7
 %define mod_vroot_version 0.9.2
 
 Summary:	Professional FTP Server
 Name:		proftpd
-Version:	1.3.4a
-Release:	13
+Version:	1.3.5a
+Release:	1
 License:	GPLv2
 Group:		System/Servers
 Url:		http://proftpd.org/
@@ -28,7 +28,6 @@ Source100:	http://prdownloads.sourceforge.net/gssmod/mod_gss-%{mod_gss_version}.
 # from http://www.castaglia.org/proftpd/
 Source102:	http://www.castaglia.org/proftpd/modules/proftpd-mod-autohost-%{mod_autohost_version}.tar.gz
 Source103:	http://www.castaglia.org/proftpd/modules/proftpd-mod-case-%{mod_case_version}.tar.gz
-Source105:	http://www.castaglia.org/proftpd/modules/proftpd-mod-time-%{mod_time_version}.tar.bz2
 Source108:	http://www.castaglia.org/proftpd/modules/proftpd-mod-vroot-%{mod_vroot_version}.tar.gz
 Source200:	anonymous.conf
 Patch0:		proftpd-1.3.0-xferstats_logfile_location.diff
@@ -37,11 +36,7 @@ Patch0:		proftpd-1.3.0-xferstats_logfile_location.diff
 Patch2:		proftpd-use-system-auth-instead-of-pam_unix.diff
 Patch4:		proftpd-1.3.0-installfix.diff
 Patch7:		proftpd-1.3.0-change_pam_name.diff
-Patch8:		proftpd-1.3.2-mod_time_fix.diff
-Patch10:	proftpd-1.3.3c-verbose_tests.diff
-Patch11:	proftpd-1.3.4a-mod_autohost_buildfix.diff
 Patch40:	mod_gss-1.3.0-format_not_a_string_literal_and_no_format_arguments.diff
-Patch41:	mod_time-format_not_a_string_literal_and_no_format_arguments.diff
 Patch42:	proftpd-1.3.3c-no_-ldes425.diff
 Requires:	pam >= 0.59
 Requires:	setup >= 2.2.0-21mdk
@@ -372,17 +367,6 @@ transmitted traffic, e.g. bits being downloaded via the RETR command, and
 received traffic, e.g. bits being uploaded via the APPE, STOR, and STOU
 commands.
 
-%package	mod_time
-Summary:	Limits acces based on the time of day and/or the day of the week
-Group:		System/Servers
-Requires(post,preun):	%{name} >= %{version}-%{release}
-Requires:	%{name} >= %{version}-%{release}
-
-%description	mod_time
-This module is designed to allow for limiting FTP commands based on the time of
-day and/or the day of the week. A more detailed explanation of the usage of
-this module follows the directive explanations.
-
 %package	mod_wrap
 Summary:	Provides tcpwrapper-like access control rules for ProFTPD
 Group:		System/Servers
@@ -506,18 +490,14 @@ The mod_memcache module enables ProFTPD support for caching data in memcached
 servers, using the libmemcached client library.
 
 %prep
-%setup -q -a100 -a102 -a103 -a105 -a108
+%setup -q -a100 -a102 -a103 -a108
 
 %patch0 -p0 -b .logfile_location
 %patch2 -p0 -b .pam
 %patch4 -p1 -b .installfix
 %patch7 -p0 -b .change_pam_name
-%patch8 -p0 -b .mod_time_fix
-%patch10 -p0 -b .verbose_tests
-%patch11 -p0 -b .mod_autohost_buildfix
 
 %patch40 -p0 -b .format_not_a_string_literal_and_no_format_arguments
-%patch41 -p0 -b .format_not_a_string_literal_and_no_format_arguments
 %patch42 -p1 -b .no_-ldes425
 
 # Mandriva config
@@ -588,7 +568,7 @@ done
 	--enable-ipv6 \
 	--enable-shadow \
 	--enable-ctrls \
-	--with-shared="mod_ratio:mod_tls:mod_tls_shmcache:mod_radius:mod_ldap:mod_sql:mod_sql_mysql:mod_sql_postgres:mod_sql_sqlite:mod_sql_passwd:mod_rewrite:mod_gss:mod_load:mod_ctrls_admin:mod_quotatab:mod_quotatab_file:mod_quotatab_ldap:mod_quotatab_sql:mod_quotatab_radius:mod_site_misc:mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_autohost:mod_case:mod_shaper:mod_ban:mod_vroot:mod_sftp:mod_sftp_pam:mod_sftp_sql:mod_time:mod_ifsession:mod_memcache:mod_tls_memcache" \
+	--with-shared="mod_ratio:mod_tls:mod_tls_shmcache:mod_radius:mod_ldap:mod_sql:mod_sql_mysql:mod_sql_postgres:mod_sql_sqlite:mod_sql_passwd:mod_rewrite:mod_gss:mod_load:mod_ctrls_admin:mod_quotatab:mod_quotatab_file:mod_quotatab_ldap:mod_quotatab_sql:mod_quotatab_radius:mod_site_misc:mod_wrap2:mod_wrap2_file:mod_wrap2_sql:mod_autohost:mod_case:mod_shaper:mod_ban:mod_vroot:mod_sftp:mod_sftp_pam:mod_sftp_sql:mod_ifsession:mod_memcache:mod_tls_memcache" \
 	--with-modules="mod_readme:mod_auth_pam" \
 	--disable-strip \
 	--enable-pcre
@@ -671,7 +651,6 @@ echo "LoadModule mod_case.c" > %{buildroot}%{_sysconfdir}/%{name}.d/28_mod_case.
 echo "LoadModule mod_load.c" > %{buildroot}%{_sysconfdir}/%{name}.d/31_mod_load.conf
 install -m0644 OpenMandriva/32_mod_shaper.conf %{buildroot}%{_sysconfdir}/%{name}.d/32_mod_shaper.conf
 echo "LoadModule mod_site_misc.c" > %{buildroot}%{_sysconfdir}/%{name}.d/33_mod_site_misc.conf
-echo "LoadModule mod_time.c" > %{buildroot}%{_sysconfdir}/%{name}.d/34_mod_time.conf
 echo "LoadModule mod_ban.c" > %{buildroot}%{_sysconfdir}/%{name}.d/35_mod_ban.conf
 echo "LoadModule mod_vroot.c" > %{buildroot}%{_sysconfdir}/%{name}.d/36_mod_vroot.conf
 echo "LoadModule mod_sftp.c" > %{buildroot}%{_sysconfdir}/%{name}.d/37_mod_sftp.conf
@@ -723,7 +702,6 @@ list of the modules that are compiled as DSOs:
  o mod_sql_postgres.so     <- NEW
  o mod_sql_sqlite.so       <- NEW
  o mod_sql_passwd.so       <- NEW
- o mod_time.so             <- NEW
  o mod_tls.so
  o mod_tls_shmcache.so     <- NEW
  o mod_wrap2.so            <- NEW
@@ -968,14 +946,6 @@ fi
 service proftpd condrestart > /dev/null 2>/dev/null || :
 
 %preun mod_sql_passwd
-if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
-fi
-
-%post mod_time
-service proftpd condrestart > /dev/null 2>/dev/null || :
-
-%preun mod_time
 if [ "$1" = 0 ]; then
     service proftpd condrestart > /dev/null 2>/dev/null || :
 fi
@@ -1237,11 +1207,6 @@ fi
 %doc doc/contrib/mod_shaper.html
 %config(noreplace) %{_sysconfdir}/%{name}.d/32_mod_shaper.conf
 %{_libdir}/%{name}/mod_shaper.so
-
-%files mod_time
-%doc mod_time/README mod_time/mod_time.html
-%config(noreplace) %{_sysconfdir}/%{name}.d/34_mod_time.conf
-%{_libdir}/%{name}/mod_time.so
 
 %files mod_wrap
 %doc doc/contrib/mod_wrap2.html
