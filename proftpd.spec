@@ -1,8 +1,7 @@
 %define _disable_ld_no_undefined 1
 %define _disable_lto 1
 
-%define _localstatedir /var/run
-
+%define _localstatedir /run/%{name}
 %define mod_gss_version 1.3.3
 %define mod_autohost_version 0.4
 %define mod_case_version 0.7
@@ -10,15 +9,12 @@
 
 Summary:	Professional FTP Server
 Name:		proftpd
-Version:	1.3.5a
-Release:	2
+Version:	1.3.5e
+Release:	1
 License:	GPLv2
 Group:		System/Servers
 Url:		http://proftpd.org/
 Source0:	ftp://ftp.proftpd.org/distrib/source/%{name}-%{version}.tar.gz
-Source1:	proftpd.logrotate
-Source2: 	proftpd.xinetd
-Source3:	proftpd.init
 Source4:	proftpd.service
 Source5:	basic.conf
 Source7:	welcome.msg
@@ -77,7 +73,7 @@ and a highly customizable server infrastructure, including support for multiple
 'virtual' FTP servers, anonymous FTP, and permission-based directory
 visibility.
 
-This version supports both standalone and xinetd operation.
+This version supports standalone operation.
 
 %package	devel
 Summary:	Development files for ProFTPD
@@ -502,9 +498,6 @@ servers, using the libmemcached client library.
 
 # Mandriva config
 mkdir -p OpenMandriva
-install -m0644 %{SOURCE1} OpenMandriva/proftpd.logrotate
-install -m0644 %{SOURCE2} OpenMandriva/proftpd.xinetd
-install -m0644 %{SOURCE3} OpenMandriva/proftpd.init
 install -m0644 %{SOURCE4} OpenMandriva/proftpd.service
 install -m0644 %{SOURCE5} OpenMandriva/basic.conf
 install -m0644 %{SOURCE7} OpenMandriva/welcome.msg
@@ -516,6 +509,10 @@ perl -pi -e "s|/usr/lib|%{_libdir}|g" OpenMandriva/basic.conf
 # fix includes, instead of a patch
 perl -pi -e "s|\<mysql\.h\>|\<mysql\/mysql\.h\>|g" contrib/mod_sql_mysql.c
 #perl -pi -e "s|\<libpq-fe\.h\>|\<pgsql\/libpq-fe\.h\>|g" contrib/mod_sql_postgres.c
+
+# Tweak logrotate script for systemd compatibility (#802178)
+sed -i -e '/killall/s/test.*/systemctl reload proftpd.service/' \
+	contrib/dist/rpm/proftpd.logrotate
 
 %build
 %serverbuild
@@ -585,18 +582,21 @@ echo "#define HAVE_LINUX_CAPABILITY_H 1" >> config.h
 #make check
 
 %install
-install -d %{buildroot}%{_initrddir}
+install -D -p -m 644 contrib/dist/rpm/proftpd.service \
+					%{buildroot}%{_unitdir}/proftpd.service
+install -D -p -m 644 contrib/dist/rpm/proftpd.logrotate \
+					%{buildroot}%{_sysconfdir}/logrotate.d/proftpd
+install -d -m 755 %{buildroot}%{_prefix}/lib/tmpfiles.d
+install -p -m 644 contrib/dist/rpm/proftpd-tmpfs.conf \
+					%{buildroot}%{_prefix}/lib/tmpfiles.d/proftpd.conf
 install -d %{buildroot}%{_libdir}/%{name}
-install -d %{buildroot}%{_sysconfdir}/logrotate.d
 install -d %{buildroot}%{_sysconfdir}/%{name}.d
 install -d %{buildroot}%{_sysconfdir}/pam.d
-install -d %{buildroot}%{_sysconfdir}/xinetd.d
 install -d %{buildroot}/var/ftp/pub
 install -d %{buildroot}/var/log/%{name}
-install -d %{buildroot}/var/run/%{name}
 
 %makeinstall \
-	rundir=%{buildroot}/var/run/%{name} \
+	rundir=/run/%{name} \
 	LIBEXECDIR=%{buildroot}%{_libdir}/%{name} \
 	SHARED_MODULE_DIRS="" \
 	pkgconfigdir=%{buildroot}%{_libdir}/pkgconfig
@@ -612,9 +612,6 @@ perl -pi -e "s|/lib/|/%{_lib}/|g" %{buildroot}%{_libdir}/pkgconfig/*.pc
 install -m0644 contrib/dist/rpm/ftp.pamd %{buildroot}%{_sysconfdir}/pam.d/%{name}
 install -m0755 contrib/xferstats.holger-preiss %{buildroot}%{_sbindir}
 
-install -m0644 OpenMandriva/proftpd.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
-install -m0644 OpenMandriva/proftpd.xinetd %{buildroot}%{_sysconfdir}/xinetd.d/%{name}-xinetd
-install -m0755 OpenMandriva/proftpd.init %{buildroot}%{_initrddir}/%{name}
 install -m0644 OpenMandriva/basic.conf %{buildroot}%{_sysconfdir}/%{name}.conf
 install -m0644 OpenMandriva/welcome.msg %{buildroot}/var/ftp/pub/welcome.msg
 
@@ -732,12 +729,6 @@ rm -f contrib/README.mod_sql contrib/README.linux-privs
 %post
 %_post_service %{name}
 
-# xinetd reset
-# Only do it if xinetd is there. -- Geoff
-if [ -x /usr/sbin/xinetd ];then
-%_post_service xinetd
-fi
-
 # ftpusers creation
 if [ ! -f %{_sysconfdir}/ftpusers ]; then
     touch %{_sysconfdir}/ftpusers
@@ -757,293 +748,289 @@ done
 %preun
 %_preun_service %{name}
 if [ "$1" = 0 ]; then
- if [ -d /var/run/%{name} ]; then
-  rm -rf /var/run/%{name}/*
+ if [ -d /run/%{name} ]; then
+  rm -rf /run/%{name}/*
  fi
 fi
 
-if [ -x /usr/sbin/xinetd ];then
-%_post_service xinetd
-fi
-
 %post mod_autohost
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_autohost
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_case
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_case
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_ctrls_admin
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_ctrls_admin
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 #%post mod_facl
-#service proftpd condrestart > /dev/null 2>/dev/null || :
+#/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 #    
 #%preun mod_facl
 #if [ "$1" = 0 ]; then
-#    service proftpd condrestart > /dev/null 2>/dev/null || :
+#    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 #fi
 
 %post mod_gss
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_gss
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_ifsession
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_ifsession
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_ldap
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_ldap
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_load
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_load
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_quotatab
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_quotatab
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_quotatab_file
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_quotatab_file
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_quotatab_ldap
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_quotatab_ldap
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_quotatab_sql
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_quotatab_sql
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_quotatab_radius
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_quotatab_radius
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_radius
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_radius
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_ratio
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_ratio
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_rewrite
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_rewrite
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_shaper
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_shaper
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_site_misc
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_site_misc
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_sql
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_sql
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_sql_mysql
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_sql_mysql
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_sql_postgres
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_sql_postgres
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_sql_sqlite
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_sql_sqlite
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_sql_passwd
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_sql_passwd
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_tls
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_tls
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_tls_shmcache
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_tls_shmcache
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_tls_memcache
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_tls_memcache
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_wrap_file
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_wrap_file
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_wrap
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_wrap
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_wrap_sql
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_wrap_sql
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_ban
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_ban
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_vroot
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_vroot
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_sftp
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_sftp
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_sftp_pam
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_sftp_pam
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_sftp_sql
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_sftp_sql
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %post mod_memcache
-service proftpd condrestart > /dev/null 2>/dev/null || :
+/bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 
 %preun mod_memcache
 if [ "$1" = 0 ]; then
-    service proftpd condrestart > /dev/null 2>/dev/null || :
+    /bin/systemctl try-restart proftpd.service > /dev/null 2>/dev/null || :
 fi
 
 %files -f %{name}.lang
@@ -1053,9 +1040,9 @@ fi
 %config(noreplace) %{_sysconfdir}/%{name}.conf
 %config(noreplace) %{_sysconfdir}/%{name}-anonymous.conf
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
-%config(noreplace) %{_sysconfdir}/xinetd.d/%{name}-xinetd
-%config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
-%{_initrddir}/%{name}
+%config(noreplace) %{_sysconfdir}/logrotate.d/proftpd
+%{_unitdir}/proftpd.service
+%{_prefix}/lib/tmpfiles.d/proftpd.conf
 %{_sbindir}/%{name}
 %{_sbindir}/ftpscrub
 %{_sbindir}/ftpshut
@@ -1074,7 +1061,6 @@ fi
 %dir /var/ftp
 %dir /var/ftp/pub
 %config(noreplace) /var/ftp/pub/welcome.msg
-%dir /var/run/%{name}
 %dir /var/log/%{name}
 %{_mandir}/man*/*
 

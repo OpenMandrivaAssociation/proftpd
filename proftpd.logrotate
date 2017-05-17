@@ -1,9 +1,0 @@
-# default logfile names taken from default_paths.h
-
-/var/log/xferlog /var/log/proftpd-log /var/log/proftpd/*.log {
-    missingok
-    nocompress
-    postrotate
-        /usr/bin/killall -HUP proftpd
-    endscript
-}
