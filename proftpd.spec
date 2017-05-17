@@ -15,7 +15,6 @@ License:	GPLv2
 Group:		System/Servers
 Url:		http://proftpd.org/
 Source0:	ftp://ftp.proftpd.org/distrib/source/%{name}-%{version}.tar.gz
-Source4:	proftpd.service
 Source5:	basic.conf
 Source7:	welcome.msg
 Source32:	32_mod_shaper.conf
@@ -498,7 +497,6 @@ servers, using the libmemcached client library.
 
 # Mandriva config
 mkdir -p OpenMandriva
-install -m0644 %{SOURCE4} OpenMandriva/proftpd.service
 install -m0644 %{SOURCE5} OpenMandriva/basic.conf
 install -m0644 %{SOURCE7} OpenMandriva/welcome.msg
 install -m0644 %{SOURCE32} OpenMandriva/32_mod_shaper.conf
