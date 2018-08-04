@@ -56,6 +56,7 @@ BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	pkgconfig(openssl)
 BuildRequires:	pkgconfig(sqlite3)
 BuildRequires:	pkgconfig(zlib)
+BuildRequires:	pkgconfig(com_err)
 Provides:	ftpserver
 Conflicts:	wu-ftpd
 Conflicts:	pure-ftpd
@@ -551,7 +552,7 @@ done
 #rm -rf lib/libltdl; mv libltdl lib/
 #aclocal; autoconf
 
-%configure2_5x \
+%configure \
 	--libexecdir=%{_libdir}/%{name} \
 	--enable-auth-pam \
 	--enable-cap \
