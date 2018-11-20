@@ -57,6 +57,7 @@ BuildRequires:	pkgconfig(openssl)
 BuildRequires:	pkgconfig(sqlite3)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(com_err)
+BuildRequires:	pkgconfig(libsasl2)
 Provides:	ftpserver
 Conflicts:	wu-ftpd
 Conflicts:	pure-ftpd
