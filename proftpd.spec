@@ -1,5 +1,6 @@
 %define _disable_ld_no_undefined 1
 %define _disable_lto 1
+%define  _empty_manifest_terminate_build 0
 
 %define _localstatedir /run/%{name}
 %define mod_gss_version 1.3.3
@@ -1034,7 +1035,7 @@ if [ "$1" = 0 ]; then
 fi
 
 %files -f %{name}.lang
-%doc README* INSTALL NEWS CREDITS COPYING doc/* README.urpmi
+%doc README* INSTALL NEWS CREDITS COPYING doc/* 
 %doc sample-configurations/*
 %dir %{_sysconfdir}/proftpd.d
 %config(noreplace) %{_sysconfdir}/%{name}.conf
