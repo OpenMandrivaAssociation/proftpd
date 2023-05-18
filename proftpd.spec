@@ -1,3 +1,5 @@
+%global optflags %{optflags} -Wno-incompatible-function-pointer-types
+
 %define _disable_ld_no_undefined 1
 %define _disable_lto 1
 %define  _empty_manifest_terminate_build 0
