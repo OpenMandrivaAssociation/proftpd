@@ -16,7 +16,7 @@ Version:	1.3.5e
 Release:	6
 License:	GPLv2
 Group:		System/Servers
-Url:		http://proftpd.org/
+Url:		https://proftpd.org/
 Source0:	ftp://ftp.proftpd.org/distrib/source/%{name}-%{version}.tar.gz
 Source5:	basic.conf
 Source7:	welcome.msg
