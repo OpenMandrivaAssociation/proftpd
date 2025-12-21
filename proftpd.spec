@@ -39,6 +39,11 @@ Patch42:	proftpd-1.3.3c-no_-ldes425.diff
 Requires:	pam >= 0.59
 Requires:	setup >= 2.2.0-21mdk
 Requires(post,postun,preun,pre): rpm-helper
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	libtool
 BuildRequires:	sasl-plug-gssapi
 BuildRequires:	cap-devel
